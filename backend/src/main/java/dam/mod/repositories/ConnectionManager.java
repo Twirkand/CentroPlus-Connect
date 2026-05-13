@@ -1,4 +1,4 @@
-package dam.mod.repository;
+package dam.mod.repositories;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
