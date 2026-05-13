@@ -1,6 +1,7 @@
 package dam.mod.models;
 
 public class Usuario {
+
     private int id;
     private String nombre;
     private String dni;
@@ -17,10 +18,27 @@ public class Usuario {
         this.tipoUsuario = tipoUsuario;
     }
 
-    public int getId() { return id; }
-    public String getNombre() { return nombre; }
-    public String getDni() { return dni; }
-    public String getEmail() { return email; }
-    public String getTelefono() { return telefono; }
-    public String getTipoUsuario() { return tipoUsuario; }
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public String getTipoUsuario() {
+        return tipoUsuario;
+    }
 }
