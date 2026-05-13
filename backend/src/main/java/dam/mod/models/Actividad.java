@@ -48,4 +48,28 @@ public class Actividad {
     public int getPlazasOcupadas() {
         return plazasOcupadas;
     }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setTipoActividad(String tipoActividad) {
+        this.tipoActividad = tipoActividad;
+    }
+
+    public void setDuracion(int duracion) {
+        this.duracion = duracion;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public void setPlazasMaximas(int plazasMaximas) {
+        this.plazasMaximas = plazasMaximas;
+    }
+
+    public void setPlazasOcupadas(int plazasOcupadas) {
+        this.plazasOcupadas = plazasOcupadas;
+    }
 }
