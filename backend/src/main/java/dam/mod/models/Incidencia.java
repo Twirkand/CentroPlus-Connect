@@ -5,15 +5,16 @@ import java.time.LocalDate;
 public class Incidencia {
 
     private int id;
-    private int id_usuario;
+    private int idUsuario;
     private String asunto;
     private String descripcion;
     private LocalDate fecha;
     private String estado;
 
-    public Incidencia (int id, int id_usuario, String asunto, String descripcion, LocalDate fecha, String estado ){
+    public Incidencia(int id, int idUsuario, String asunto, String descripcion,
+            LocalDate fecha, String estado) {
         this.id = id;
-        this.id_usuario = id_usuario;
+        this.idUsuario = idUsuario;
         this.asunto = asunto;
         this.descripcion = descripcion;
         this.fecha = fecha;
@@ -23,22 +24,32 @@ public class Incidencia {
     public int getId() {
         return id;
     }
-    public int getId_usuario() {
-        return id_usuario;
+
+    public int getIdUsuario() {
+        return idUsuario;
     }
+
     public String getAsunto() {
         return asunto;
     }
+
     public String getDescripcion() {
         return descripcion;
     }
+
     public LocalDate getFecha() {
         return fecha;
     }
+
     public String getEstado() {
         return estado;
     }
 
-    
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 }
