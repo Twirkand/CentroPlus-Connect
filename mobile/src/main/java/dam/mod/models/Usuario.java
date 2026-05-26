@@ -8,14 +8,16 @@ public class Usuario {
     private String email;
     private String telefono;
     private String tipoUsuario;
+    private String password;
 
-    public Usuario(int id, String nombre, String dni, String email, String telefono, String tipoUsuario) {
+    public Usuario(int id, String nombre, String dni, String email, String telefono, String tipoUsuario, String password) {
         this.id = id;
         this.nombre = nombre;
         this.dni = dni;
         this.email = email;
         this.telefono = telefono;
         this.tipoUsuario = tipoUsuario;
+        this.password = password;
     }
 
     public int getId() {
@@ -41,4 +43,6 @@ public class Usuario {
     public String getTipoUsuario() {
         return tipoUsuario;
     }
+
+    public String getPassword() { return password; }
 }

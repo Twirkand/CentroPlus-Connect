@@ -44,4 +44,21 @@ public interface IUsuarioService {
      * @return true si la eliminación fue exitosa, false en caso contrario.
      */
     boolean delete(int id);
+
+    /**
+     * Login
+     *
+     * @param dni  identificador único
+     * @param password  contraseña
+     * @return  login
+     */
+    Usuario login(String dni, String password);
+
+    /**
+     * Busca por dni.
+     *
+     * @param dni   el dni.
+     * @return  el usuario.
+     */
+    Usuario findByDni(String dni);
 }

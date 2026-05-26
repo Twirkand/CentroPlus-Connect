@@ -10,6 +10,7 @@ import java.util.List;
 import dam.mod.models.Usuario;
 import dam.mod.repositories.ConnectionManager;
 import dam.mod.repositories.IUsuarioRepository;
+import dam.mod.utils.PasswordUtils;
 
 public class UsuarioRepository implements IUsuarioRepository {
 
@@ -18,21 +19,26 @@ public class UsuarioRepository implements IUsuarioRepository {
         String sql = "SELECT * FROM usuarios";
         List<Usuario> listaUsuarios = new ArrayList<>();
 
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql); ResultSet resultSet = preparedStatement.executeQuery()) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
-            while (resultSet.next()) {
+            while (rs.next()) {
                 listaUsuarios.add(new Usuario(
-                        resultSet.getInt("id"),
-                        resultSet.getString("nombre"),
-                        resultSet.getString("dni"),
-                        resultSet.getString("email"),
-                        resultSet.getString("telefono"),
-                        resultSet.getString("tipo_usuario")
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("dni"),
+                        rs.getString("email"),
+                        rs.getString("telefono"),
+                        rs.getString("tipo_usuario"),
+                        rs.getString("password")
                 ));
             }
-        return listaUsuarios;
-        } catch (SQLException exception) {
-            throw new RuntimeException("Error al obtener usuarios", exception);
+
+            return listaUsuarios;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al obtener usuarios", e);
         }
     }
 
@@ -40,25 +46,27 @@ public class UsuarioRepository implements IUsuarioRepository {
     public Usuario findById(int idUsuario) {
         String sql = "SELECT * FROM usuarios WHERE id=?";
 
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            preparedStatement.setInt(1, idUsuario);
+            ps.setInt(1, idUsuario);
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
                     return new Usuario(
-                            resultSet.getInt("id"),
-                            resultSet.getString("nombre"),
-                            resultSet.getString("dni"),
-                            resultSet.getString("email"),
-                            resultSet.getString("telefono"),
-                            resultSet.getString("tipo_usuario")
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("dni"),
+                            rs.getString("email"),
+                            rs.getString("telefono"),
+                            rs.getString("tipo_usuario"),
+                            rs.getString("password")
                     );
                 }
             }
 
-        } catch (SQLException exception) {
-            throw new RuntimeException("Error al buscar usuario", exception);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al buscar usuario", e);
         }
 
         return null;
@@ -66,54 +74,138 @@ public class UsuarioRepository implements IUsuarioRepository {
 
     @Override
     public boolean save(Usuario usuario) {
-        String sql = "INSERT INTO usuarios (nombre, dni, email, telefono, tipo_usuario) VALUES (?,?,?,?,?)";
 
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        String sql = "INSERT INTO usuarios (nombre, dni, email, telefono, tipo_usuario, password) VALUES (?,?,?,?,?,?)";
 
-            preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getDni());
-            preparedStatement.setString(3, usuario.getEmail());
-            preparedStatement.setString(4, usuario.getTelefono());
-            preparedStatement.setString(5, usuario.getTipoUsuario());
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            return preparedStatement.executeUpdate() > 0;
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getDni());
+            ps.setString(3, usuario.getEmail());
+            ps.setString(4, usuario.getTelefono());
+            ps.setString(5, usuario.getTipoUsuario());
 
-        } catch (SQLException exception) {
-            throw new RuntimeException("Error al insertar usuario", exception);
+            // 🔐 HASH de contraseña
+            ps.setString(6, PasswordUtils.hashPassword(usuario.getPassword()));
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al insertar usuario", e);
         }
     }
 
     @Override
     public boolean update(Usuario usuario) {
-        String sql = "UPDATE usuarios SET nombre=?, dni=?, email=?, telefono=?, tipo_usuario=? WHERE id=?";
 
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        String sql = "UPDATE usuarios SET nombre=?, dni=?, email=?, telefono=?, tipo_usuario=?, password=? WHERE id=?";
 
-            preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getDni());
-            preparedStatement.setString(3, usuario.getEmail());
-            preparedStatement.setString(4, usuario.getTelefono());
-            preparedStatement.setString(5, usuario.getTipoUsuario());
-            preparedStatement.setInt(6, usuario.getId());
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            return preparedStatement.executeUpdate() > 0;
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getDni());
+            ps.setString(3, usuario.getEmail());
+            ps.setString(4, usuario.getTelefono());
+            ps.setString(5, usuario.getTipoUsuario());
 
-        } catch (SQLException exception) {
-            throw new RuntimeException("Error al actualizar usuario", exception);
+            // 🔐 hash si se cambia contraseña
+            ps.setString(6, PasswordUtils.hashPassword(usuario.getPassword()));
+
+            ps.setInt(7, usuario.getId());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al actualizar usuario", e);
         }
     }
 
     @Override
     public boolean delete(int idUsuario) {
+
         String sql = "DELETE FROM usuarios WHERE id=?";
 
-        try (Connection connection = ConnectionManager.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            preparedStatement.setInt(1, idUsuario);
-            return preparedStatement.executeUpdate() > 0;
+            ps.setInt(1, idUsuario);
 
-        } catch (SQLException exception) {
-            throw new RuntimeException("Error al eliminar usuario", exception);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al eliminar usuario", e);
         }
+    }
+
+    @Override
+    public Usuario login(String dni, String password) {
+
+        String sql = "SELECT * FROM usuarios WHERE dni=?";
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, dni);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+
+                    String hashBD = rs.getString("password");
+
+                    if (PasswordUtils.checkPassword(password, hashBD)) {
+
+                        return new Usuario(
+                                rs.getInt("id"),
+                                rs.getString("nombre"),
+                                rs.getString("dni"),
+                                rs.getString("email"),
+                                rs.getString("telefono"),
+                                rs.getString("tipo_usuario"),
+                                hashBD
+                        );
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error en login", e);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Usuario findByDni(String dni) {
+
+        String sql = "SELECT * FROM usuarios WHERE dni=?";
+
+        try (Connection connection = ConnectionManager.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, dni);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    return new Usuario(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("dni"),
+                            rs.getString("email"),
+                            rs.getString("telefono"),
+                            rs.getString("tipo_usuario"),
+                            rs.getString("password")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al buscar usuario por DNI", e);
+        }
+
+        return null;
     }
 }

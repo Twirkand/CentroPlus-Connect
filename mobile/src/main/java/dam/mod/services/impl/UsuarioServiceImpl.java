@@ -1,7 +1,7 @@
 package dam.mod.services.impl;
 
 import java.util.List;
-
+import dam.mod.utils.PasswordUtils;
 import dam.mod.models.Usuario;
 import dam.mod.repositories.IUsuarioRepository;
 import dam.mod.services.IUsuarioService;
@@ -51,5 +51,39 @@ public class UsuarioServiceImpl implements IUsuarioService {
         Validaciones.validarEmail(usuario.getEmail());
         Validaciones.validarDNI(usuario.getDni());
         Validaciones.validarTipoUsuario(usuario.getTipoUsuario());
+    }
+
+    @Override
+    public Usuario login(String dni, String password) {
+
+        if (dni == null || dni.isBlank()) {
+            throw new IllegalArgumentException("DNI obligatorio");
+        }
+
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Password obligatoria");
+        }
+
+        Usuario usuario = repository.findByDni(dni);
+
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no existe");
+        }
+
+        if (!PasswordUtils.checkPassword(password, usuario.getPassword())) {
+            throw new RuntimeException("Credenciales incorrectas");
+        }
+
+        return usuario;
+    }
+
+    @Override
+    public Usuario findByDni(String dni) {
+
+        if (dni == null || dni.isBlank()) {
+            throw new IllegalArgumentException("DNI obligatorio");
+        }
+
+        return repository.findByDni(dni);
     }
 }

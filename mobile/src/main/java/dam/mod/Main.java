@@ -2,9 +2,8 @@ package dam.mod;
 
 import dam.mod.utils.ScreenManager;
 import javafx.application.Application;
-import javafx.stage.Stage;
 import javafx.scene.image.Image;
-
+import javafx.stage.Stage;
 
 public class Main extends Application {
 
@@ -13,10 +12,13 @@ public class Main extends Application {
 
         ScreenManager.init(stage);
 
-        ScreenManager.change("inicio.fxml");
+
+        ScreenManager.change("login.fxml");
+
         stage.getIcons().add(
                 new Image(getClass().getResourceAsStream("/icons/app.png"))
         );
+
         stage.setTitle("CentroPlus-Connect");
         stage.setResizable(false);
     }

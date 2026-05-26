@@ -114,4 +114,22 @@ public class ReservaRepository implements IReservaRepository {
             throw new RuntimeException("Error al eliminar reserva", exception);
         }
     }
+    @Override
+    public boolean existsReserva(int actividadId, int usuarioId) {
+
+        String sql = "SELECT 1 FROM reservas WHERE id_actividad=? AND id_usuario=?";
+
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, actividadId);
+            ps.setInt(2, usuarioId);
+
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

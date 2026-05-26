@@ -71,4 +71,7 @@ public interface IReservaService {
      * @return true si hay plazas disponibles, false en caso contrario.
      */
     boolean comprobarPlazasDisponibles(int idActividad);
+
+    boolean yaReservado(int actividadId, int usuarioId);
+    boolean reservar(int actividadId, int usuarioId);
 }

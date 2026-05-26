@@ -9,4 +9,5 @@ public interface IReservaRepository {
     boolean save(Reserva reserva);
     boolean update(Reserva reserva);
     boolean delete(int id);
+    boolean existsReserva(int actividadId, int usuarioId);
 }
