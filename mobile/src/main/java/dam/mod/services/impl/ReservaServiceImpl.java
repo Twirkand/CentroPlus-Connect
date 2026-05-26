@@ -1,5 +1,6 @@
 package dam.mod.services.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import dam.mod.models.Actividad;
@@ -18,8 +19,8 @@ public class ReservaServiceImpl implements IReservaService {
     private final IActividadService actividadService;
 
     public ReservaServiceImpl(IReservaRepository repository,
-            IUsuarioService usuarioService,
-            IActividadService actividadService) {
+                              IUsuarioService usuarioService,
+                              IActividadService actividadService) {
         this.repository = repository;
         this.usuarioService = usuarioService;
         this.actividadService = actividadService;
@@ -37,27 +38,26 @@ public class ReservaServiceImpl implements IReservaService {
 
     @Override
     public boolean create(Reserva reserva) {
+
         validar(reserva);
 
-        Usuario usuario = usuarioService.findById(reserva.getIdUsuario());
-        if (usuario == null) {
+        if (usuarioService.findById(reserva.getIdUsuario()) == null) {
             throw new IllegalArgumentException("El usuario no existe");
         }
 
-        Actividad actividad = actividadService.findById(reserva.getIdActividad());
-        if (actividad == null) {
+        if (actividadService.findById(reserva.getIdActividad()) == null) {
             throw new IllegalArgumentException("La actividad no existe");
         }
 
-        if (actividadService.calcularPlazasDisponibles(actividad.getId()) <= 0) {
-            throw new IllegalArgumentException("No hay plazas disponibles para esta actividad");
+        if (actividadService.calcularPlazasDisponibles(reserva.getIdActividad()) <= 0) {
+            throw new IllegalArgumentException("No hay plazas disponibles");
         }
 
-        if (existeReservaUsuarioActividad(reserva.getIdUsuario(), reserva.getIdActividad())) {
-            throw new IllegalArgumentException("El usuario ya tiene una reserva para esta actividad");
+        if (yaReservado(reserva.getIdActividad(), reserva.getIdUsuario())) {
+            throw new IllegalArgumentException("Ya tienes una reserva para esta actividad");
         }
 
-        actividadService.reservarPlaza(actividad.getId());
+        actividadService.reservarPlaza(reserva.getIdActividad());
 
         return repository.save(reserva);
     }
@@ -75,7 +75,9 @@ public class ReservaServiceImpl implements IReservaService {
 
     @Override
     public boolean cancelarReserva(int idReserva) {
+
         Reserva reserva = findById(idReserva);
+
         if (reserva == null) {
             return false;
         }
@@ -86,10 +88,13 @@ public class ReservaServiceImpl implements IReservaService {
     }
 
     @Override
+    public boolean yaReservado(int actividadId, int usuarioId) {
+        return repository.existsReserva(actividadId, usuarioId);
+    }
+
+    @Override
     public boolean existeReservaUsuarioActividad(int idUsuario, int idActividad) {
-        return repository.findAll().stream()
-                .anyMatch(r -> r.getIdUsuario() == idUsuario
-                && r.getIdActividad() == idActividad);
+        return yaReservado(idActividad, idUsuario);
     }
 
     @Override
@@ -102,5 +107,38 @@ public class ReservaServiceImpl implements IReservaService {
             throw new IllegalArgumentException("Reserva no puede ser null");
         }
         Validaciones.validarEstadoReserva(reserva.getEstado());
+    }
+    @Override
+    public boolean reservar(int actividadId, int usuarioId) {
+
+        Usuario usuario = usuarioService.findById(usuarioId);
+        if (usuario == null) {
+            throw new IllegalArgumentException("El usuario no existe");
+        }
+
+        Actividad actividad = actividadService.findById(actividadId);
+        if (actividad == null) {
+            throw new IllegalArgumentException("La actividad no existe");
+        }
+
+        if (actividadService.calcularPlazasDisponibles(actividadId) <= 0) {
+            throw new IllegalArgumentException("No hay plazas disponibles");
+        }
+
+        if (yaReservado(actividadId, usuarioId)) {
+            throw new IllegalArgumentException("Ya tienes una reserva para esta actividad");
+        }
+
+        actividadService.reservarPlaza(actividadId);
+
+        Reserva reserva = new Reserva(
+                0,
+                usuarioId,
+                actividadId,
+                LocalDate.now(),
+                "ACTIVA"
+        );
+
+        return repository.save(reserva);
     }
 }

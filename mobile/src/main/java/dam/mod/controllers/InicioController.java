@@ -1,9 +1,18 @@
 package dam.mod.controllers;
 
 import dam.mod.utils.ScreenManager;
+import dam.mod.utils.Session;
 import javafx.fxml.FXML;
 
 public class InicioController {
+
+    @FXML
+    public void initialize() {
+
+        if (Session.getCurrentUser() == null) {
+            ScreenManager.change("login.fxml");
+        }
+    }
 
     @FXML
     private void abrirActividades() {

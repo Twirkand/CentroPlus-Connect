@@ -9,4 +9,6 @@ public interface IUsuarioRepository {
     boolean save(Usuario usuario);
     boolean update(Usuario usuario);
     boolean delete(int id);
+    Usuario login(String dni, String password);
+    Usuario findByDni(String dni);
 }

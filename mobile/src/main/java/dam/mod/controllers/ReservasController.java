@@ -1,7 +1,7 @@
 package dam.mod.controllers;
 
 import dam.mod.models.Reserva;
-
+import dam.mod.utils.Session;
 import dam.mod.repositories.IReservaRepository;
 import dam.mod.repositories.impl.ReservaRepository;
 
@@ -35,6 +35,9 @@ public class ReservasController {
     @FXML
     public void initialize() {
 
+        if (Session.getCurrentUser() == null) {
+            ScreenManager.change("login.fxml");
+        }
         IReservaRepository reservaRepo = new ReservaRepository();
         IUsuarioRepository usuarioRepo = new UsuarioRepository();
         IActividadRepository actividadRepo = new ActividadRepository();
@@ -71,10 +74,10 @@ public class ReservasController {
             boolean ok = reservaService.cancelarReserva(seleccionada.getId());
 
             if (ok) {
-                System.out.println("✔ Reserva cancelada");
+                System.out.println("Reserva cancelada");
                 cargarReservas();
             } else {
-                System.out.println("❌ No se pudo cancelar");
+                System.out.println("No se pudo cancelar");
             }
         }
     }

@@ -66,7 +66,7 @@ public final class Validaciones {
     }
 
     public static void validarDNI(String dni) {
-        if (dni == null || !dni.matches("^[0-9]{8}[A-Z]$")) {
+        if (dni == null || !dni.matches("^[0-9]{8}[A-Za-z]$")) {
             throw new IllegalArgumentException("DNI inválido: " + dni);
         }
     }

@@ -1,7 +1,7 @@
 package dam.mod.controllers;
 
 import dam.mod.models.Incidencia;
-
+import dam.mod.utils.Session;
 import dam.mod.repositories.IIncidenciaRepository;
 import dam.mod.repositories.impl.IncidenciaRepository;
 
@@ -37,6 +37,9 @@ public class IncidenciasController {
     @FXML
     public void initialize() {
 
+        if (Session.getCurrentUser() == null) {
+            ScreenManager.change("login.fxml");
+        }
         IIncidenciaRepository repo = new IncidenciaRepository();
         IUsuarioRepository usuarioRepo = new UsuarioRepository();
 
