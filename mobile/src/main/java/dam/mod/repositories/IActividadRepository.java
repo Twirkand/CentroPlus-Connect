@@ -31,5 +31,11 @@ public interface IActividadRepository {
      * @return
      */
     boolean update(Actividad actividad);
+
+    /**
+     * Funcion que borra una actividad por su id
+     * @param id id de la actividad
+     * @return
+     */
     boolean delete(int id);
 }
