@@ -34,7 +34,7 @@ public class ReservasController {
     private IReservaService reservaService;
     private IUsuarioService usuarioService;
 
-    // inicializacion
+    //inicializacion
     @FXML
     public void initialize() {
 
@@ -57,7 +57,7 @@ public class ReservasController {
         cargarReservas();
     }
 
-    // Carga reservas
+    //Carga reservas
     private void cargarReservas() {
 
         int idUsuario = Session.getCurrentUser().getId();
@@ -66,7 +66,7 @@ public class ReservasController {
                 reservaService.findByIdUsuario(idUsuario));
     }
 
-    // cancela reservas
+    //cancela reservas
     @FXML
     private void cancelarReserva() {
 
@@ -87,7 +87,7 @@ public class ReservasController {
         }
     }
 
-    // volver al inicio
+    //volver al inicio
     @FXML
     private void volver() {
         ScreenManager.change("inicio.fxml");

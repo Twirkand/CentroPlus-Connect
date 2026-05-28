@@ -1,6 +1,7 @@
 package dam.mod.controllers;
 
 import dam.mod.models.Incidencia;
+import dam.mod.models.Usuario;
 import dam.mod.utils.Session;
 import dam.mod.repositories.IIncidenciaRepository;
 import dam.mod.repositories.impl.IncidenciaRepository;
@@ -17,6 +18,7 @@ import dam.mod.services.impl.UsuarioServiceImpl;
 import dam.mod.utils.ScreenManager;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -30,9 +32,12 @@ public class IncidenciasController {
     @FXML
     private TextArea txtDescripcion;
 
+    @FXML
+    private ListView<Incidencia> listaIncidencias;
+
     private IIncidenciaService incidenciaService;
 
-    private int idUsuario = 1;
+    private Usuario usuarioActual;
 
     //inicializacion
     @FXML
@@ -40,15 +45,24 @@ public class IncidenciasController {
 
         if (Session.getCurrentUser() == null) {
             ScreenManager.change("login.fxml");
+            return;
         }
+
+        usuarioActual = Session.getCurrentUser();
+
         IIncidenciaRepository repo = new IncidenciaRepository();
         IUsuarioRepository usuarioRepo = new UsuarioRepository();
 
-        IUsuarioService usuarioService =
-                new UsuarioServiceImpl(usuarioRepo);
+        IUsuarioService usuarioService = new UsuarioServiceImpl(usuarioRepo);
 
-        incidenciaService =
-                new IncidenciaServiceImpl(repo, usuarioService);
+        incidenciaService = new IncidenciaServiceImpl(repo, usuarioService);
+
+        cargarIncidencias();
+    }
+
+    private void cargarIncidencias() {
+        listaIncidencias.getItems().setAll(
+                incidenciaService.findByUsuario(usuarioActual.getId()));
     }
 
     //envio de incidencia
@@ -65,23 +79,35 @@ public class IncidenciasController {
 
         Incidencia incidencia = new Incidencia(
                 0,
-                idUsuario,
+                usuarioActual.getId(),
                 asunto,
                 descripcion,
                 LocalDate.now(),
-                "ABIERTA"
-        );
+                "ABIERTA");
 
         boolean ok = incidenciaService.create(incidencia);
 
         if (ok) {
-            System.out.println("✔ Incidencia enviada");
-
-            txtAsunto.clear();
-            txtDescripcion.clear();
+            System.out.println("Incidencia enviada");
+            cargarIncidencias();
         } else {
             System.out.println("Error al enviar incidencia");
         }
+
+        txtAsunto.clear();
+        txtDescripcion.clear();
+    }
+
+    @FXML
+    private void seleccionarIncidencia(javafx.scene.input.MouseEvent event) {
+
+        Incidencia incidencia = listaIncidencias.getSelectionModel().getSelectedItem();
+
+        if (incidencia == null)
+            return;
+
+        ScreenManager.setIncidenciaId(incidencia.getId());
+        ScreenManager.change("detalle_incidencia.fxml");
     }
 
     //volver
