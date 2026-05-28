@@ -69,8 +69,5 @@ public class Actividad {
         Actividad other = (Actividad) obj;
         return id == other.id;
     }
-
-    
-
     
 }
