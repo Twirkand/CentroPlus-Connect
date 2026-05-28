@@ -10,7 +10,7 @@ public class Reserva {
     private LocalDate fecha;
     private String estado;
 
-    // NUEVO: para mostrar el nombre en UI
+    
     private String nombreActividad;
 
     public Reserva(int id, int idUsuario, int idActividad,
@@ -22,7 +22,6 @@ public class Reserva {
         this.estado = estado;
     }
 
-    // GETTERS
     public int getId() {
         return id;
     }
@@ -47,7 +46,6 @@ public class Reserva {
         return nombreActividad;
     }
 
-    // SETTER necesario para el JOIN en el repository
     public void setNombreActividad(String nombreActividad) {
         this.nombreActividad = nombreActividad;
     }
@@ -55,9 +53,31 @@ public class Reserva {
     @Override
     public String toString() {
 
-        // Esto es lo que verá el ListView
         return nombreActividad +
                 " | Fecha: " + fecha +
                 " | Estado: " + estado;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Reserva other = (Reserva) obj;
+        if (id != other.id)
+            return false;
+        return true;
+    }
+
 }
