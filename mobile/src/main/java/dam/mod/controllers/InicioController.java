@@ -39,9 +39,28 @@ public class InicioController {
         ScreenManager.change("perfil.fxml");
     }
 
-    //cambiar idioma
+    // IDIOMA
     @FXML
-    private void cambiarIdioma() {
-        System.out.println("Selector de idioma (pendiente de implementar)");
+    private void setSpanish() {
+        aplicarIdioma("es");
+    }
+
+    @FXML
+    private void setEnglish() {
+        aplicarIdioma("en");
+    }
+
+    @FXML
+    private void setGerman() {
+        aplicarIdioma("de");
+    }
+
+    private void aplicarIdioma(String lang) {
+
+        switch (lang) {
+            case "es" -> System.out.println("Idioma: Español");
+            case "en" -> System.out.println("Idioma: English");
+            case "de" -> System.out.println("Idioma: Deutsch");
+        }
     }
 }

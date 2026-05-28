@@ -5,12 +5,17 @@ import java.util.stream.Collectors;
 
 import dam.mod.models.Actividad;
 import dam.mod.repositories.IActividadRepository;
+import dam.mod.repositories.impl.ActividadRepository;
 import dam.mod.services.IActividadService;
 import dam.mod.utils.Validaciones;
 
 public class ActividadServiceImpl implements IActividadService {
 
     private final IActividadRepository repository;
+
+    public ActividadServiceImpl(){
+        this.repository = new ActividadRepository();
+    }
 
     public ActividadServiceImpl(IActividadRepository repository) {
         this.repository = repository;
@@ -23,6 +28,9 @@ public class ActividadServiceImpl implements IActividadService {
 
     @Override
     public Actividad findById(int id) {
+        if(id < 1){
+            return null;
+        }
         return repository.findById(id);
     }
 
