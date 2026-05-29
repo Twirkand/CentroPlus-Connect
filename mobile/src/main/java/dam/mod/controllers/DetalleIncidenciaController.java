@@ -125,7 +125,6 @@ public class DetalleIncidenciaController {
                 inc.getEstado().equalsIgnoreCase("CERRADA");
 
         btnCerrar.setDisable(cerrada);
-        btnCerrar.setText(cerrada ? "Incidencia cerrada" : "Cerrar incidencia");
     }
 
     /**
