@@ -1,85 +1,87 @@
 package dam.mod.services;
 
 import java.util.List;
-
 import dam.mod.models.Actividad;
 
+/**
+ * Interfaz que define las operaciones de negocio relacionadas con actividades.
+ */
 public interface IActividadService {
 
     /**
-     * Devuelve una lista de todas las actividades disponibles.
+     * Devuelve todas las actividades disponibles en el sistema.
      *
-     * @return Lista de actividades.
+     * @return lista de actividades
      */
     List<Actividad> findAll();
 
     /**
-     * Devuelve una actividad por su ID.
+     * Busca una actividad por su identificador.
      *
-     * @param id ID de la actividad.
-     * @return Actividad encontrada o null si no se encuentra.
+     * @param id ID de la actividad
+     * @return actividad encontrada o null si no existe
      */
     Actividad findById(int id);
 
     /**
-     * Crea una nueva actividad.
+     * Crea una nueva actividad en el sistema.
      *
-     * @param actividad Actividad a crear.
-     * @return true si la creación fue exitosa, false en caso contrario.
+     * @param actividad objeto actividad a crear
+     * @return true si la creación fue correcta, false en caso contrario
      */
     boolean create(Actividad actividad);
 
     /**
      * Actualiza una actividad existente.
      *
-     * @param actividad Actividad a actualizar.
-     * @return true si la actualización fue exitosa, false en caso contrario.
+     * @param actividad objeto actividad con datos actualizados
+     * @return true si la actualización fue correcta, false en caso contrario
      */
     boolean update(Actividad actividad);
 
     /**
-     * Elimina una actividad por su ID.
+     * Elimina una actividad por su identificador.
      *
-     * @param id ID de la actividad.
-     * @return true si la eliminación fue exitosa, false en caso contrario.
+     * @param id ID de la actividad
+     * @return true si la eliminación fue correcta, false en caso contrario
      */
     boolean delete(int id);
 
     /**
      * Reserva una plaza en una actividad.
      *
-     * @param idActividad ID de la actividad.
-     * @return true si la reserva fue exitosa, false en caso contrario.
+     * @param idActividad ID de la actividad
+     * @return true si la reserva fue correcta, false en caso contrario
      */
     boolean reservarPlaza(int idActividad);
 
     /**
-     * Cancela la reserva de una plaza en una actividad.
+     * Cancela una plaza reservada en una actividad.
      *
-     * @param idActividad ID de la actividad.
-     * @return true si la cancelación fue exitosa, false en caso contrario.
+     * @param idActividad ID de la actividad
+     * @return true si la cancelación fue correcta, false en caso contrario
      */
     boolean cancelarPlaza(int idActividad);
 
     /**
-     * Devuelve una lista de todas las actividades completas.
+     * Devuelve todas las actividades que están completas (sin plazas disponibles).
      *
-     * @return Lista de actividades completas.
+     * @return lista de actividades completas
      */
     List<Actividad> findCompletas();
 
     /**
      * Calcula el número de plazas disponibles para una actividad.
      *
-     * @param idActividad ID de la actividad.
-     * @return Número de plazas disponibles.
+     * @param idActividad ID de la actividad
+     * @return número de plazas libres
      */
     int calcularPlazasDisponibles(int idActividad);
 
     /**
      * Calcula los ingresos totales generados por todas las actividades.
      *
-     * @return Ingresos totales.
+     * @return ingresos totales del sistema
      */
     double calcularIngresosTotales();
 }
