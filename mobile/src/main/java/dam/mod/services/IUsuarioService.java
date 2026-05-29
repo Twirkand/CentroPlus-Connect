@@ -1,64 +1,66 @@
 package dam.mod.services;
 
 import java.util.List;
-
 import dam.mod.models.Usuario;
 
+/**
+ * Interfaz que define las operaciones de negocio relacionadas con usuarios.
+ */
 public interface IUsuarioService {
 
     /**
-     * Devuelve una lista de todos los usuarios.
+     * Devuelve todos los usuarios registrados en el sistema.
      *
-     * @return Lista de usuarios.
+     * @return lista de usuarios
      */
     List<Usuario> findAll();
 
     /**
-     * Devuelve un usuario por su ID.
+     * Busca un usuario por su identificador.
      *
-     * @param id ID del usuario.
-     * @return Usuario encontrado o null si no se encuentra.
+     * @param id ID del usuario
+     * @return usuario encontrado o null si no existe
      */
     Usuario findById(int id);
 
     /**
-     * Crea un nuevo usuario.
+     * Crea un nuevo usuario en el sistema.
      *
-     * @param usuario Usuario a crear.
-     * @return true si la creación fue exitosa, false en caso contrario.
+     * @param usuario objeto usuario a crear
+     * @return true si la creación fue correcta, false en caso contrario
      */
     boolean create(Usuario usuario);
 
     /**
-     * Actualiza un usuario existente.
+     * Actualiza la información de un usuario existente.
      *
-     * @param usuario Usuario a actualizar.
-     * @return true si la actualización fue exitosa, false en caso contrario.
+     * @param usuario objeto usuario con datos actualizados
+     * @return true si la actualización fue correcta, false en caso contrario
      */
     boolean update(Usuario usuario);
 
     /**
-     * Elimina un usuario por su ID.
+     * Elimina un usuario por su identificador.
      *
-     * @param id ID del usuario.
-     * @return true si la eliminación fue exitosa, false en caso contrario.
+     * @param id ID del usuario
+     * @return true si el usuario fue eliminado correctamente, false en caso contrario
      */
     boolean delete(int id);
 
     /**
-     * Login
+     * Autentica un usuario en el sistema mediante DNI y contraseña.
      *
-     * @param dni  identificador único
-     * @param password  contraseña
-     * @return  login
+     * @param dni identificador único del usuario
+     * @param password contraseña del usuario
+     * @return usuario autenticado si las credenciales son correctas, null en caso contrario
      */
     Usuario login(String dni, String password);
 
     /**
-     * Busca por dni.
+     * Busca un usuario por su DNI.
      *
-     * @param dni   el dni.
-     * @return  el usuario.
+     * @param dni documento nacional de identidad del usuario
+     * @return usuario encontrado o null si no existe
      */
     Usuario findByDni(String dni);
 }

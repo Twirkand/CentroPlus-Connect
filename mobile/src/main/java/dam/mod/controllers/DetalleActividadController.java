@@ -19,20 +19,41 @@ import dam.mod.utils.Session;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
+/**
+ * Controlador del detalle de una actividad.
+ *
+ * Permite visualizar la información de una actividad y realizar reservas.
+ * Gestiona la interacción entre el usuario y el sistema de reservas.
+ */
 public class DetalleActividadController {
 
+    /**
+     * Nombre de la actividad.
+     */
     @FXML
     private Label lblNombre;
 
+    /**
+     * Tipo de actividad.
+     */
     @FXML
     private Label lblTipo;
 
+    /**
+     * Duración de la actividad.
+     */
     @FXML
     private Label lblDuracion;
 
+    /**
+     * Precio de la actividad.
+     */
     @FXML
     private Label lblPrecio;
 
+    /**
+     * Plazas disponibles de la actividad.
+     */
     @FXML
     private Label lblPlazas;
 
@@ -41,21 +62,28 @@ public class DetalleActividadController {
     private IActividadService actividadService;
     private IReservaService reservaService;
 
+    /**
+     * Establece la actividad seleccionada.
+     *
+     * @param a actividad seleccionada
+     */
     public static void setActividad(Actividad a) {
         actividadSeleccionada = a;
     }
 
+    /**
+     * Inicializa el controlador.
+     *
+     * Verifica sesión activa, inicializa servicios y carga los datos de la actividad.
+     */
     @FXML
     public void initialize() {
 
-        // Login obligatorio
         Usuario user = Session.getCurrentUser();
         if (user == null) {
             ScreenManager.change("login.fxml");
             return;
         }
-
-        // SERVICES
 
         IActividadRepository actividadRepo = new ActividadRepository();
         actividadService = new ActividadServiceImpl(actividadRepo);
@@ -71,12 +99,14 @@ public class DetalleActividadController {
                 actividadService
         );
 
-        // LOAD DATA
         if (actividadSeleccionada != null) {
             cargarDatos();
         }
     }
 
+    /**
+     * Carga los datos de la actividad en la interfaz.
+     */
     private void cargarDatos() {
 
         lblNombre.setText("Nombre: " + actividadSeleccionada.getNombre());
@@ -91,19 +121,22 @@ public class DetalleActividadController {
         lblPlazas.setText("Plazas disponibles: " + disponibles);
     }
 
+    /**
+     * Realiza la reserva de la actividad para el usuario actual.
+     *
+     * Valida si ya está reservada o si hay plazas disponibles.
+     */
     @FXML
     private void reservar() {
 
         int usuarioId = Session.getCurrentUser().getId();
         int actividadId = actividadSeleccionada.getId();
 
-        // ya reservado
         if (reservaService.yaReservado(actividadId, usuarioId)) {
             System.out.println("Ya tienes esta actividad reservada");
             return;
         }
 
-        // sin plazas
         int disponibles =
                 actividadSeleccionada.getPlazasMaximas()
                         - actividadSeleccionada.getPlazasOcupadas();
@@ -113,7 +146,6 @@ public class DetalleActividadController {
             return;
         }
 
-        // reservar
         boolean ok = reservaService.reservar(actividadId, usuarioId);
 
         if (ok) {
@@ -130,7 +162,9 @@ public class DetalleActividadController {
         }
     }
 
-    //volver
+    /**
+     * Vuelve a la pantalla de actividades.
+     */
     @FXML
     private void volver() {
         ScreenManager.change("actividades.fxml");
