@@ -1,7 +1,6 @@
 package dam.mod.controllers;
 
 import dam.mod.models.Reserva;
-import dam.mod.models.Usuario;
 import dam.mod.utils.Session;
 import dam.mod.repositories.IReservaRepository;
 import dam.mod.repositories.impl.ReservaRepository;
@@ -41,7 +40,6 @@ public class ReservasController {
     private ListView<Reserva> listaReservas;
 
     private IReservaService reservaService;
-    private IUsuarioService usuarioService;
 
     /**
      * Inicializa el controlador.
