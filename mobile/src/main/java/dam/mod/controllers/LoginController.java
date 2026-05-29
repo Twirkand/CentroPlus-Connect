@@ -63,11 +63,16 @@ public class LoginController {
     private void handleLogin() {
 
         try {
-            Usuario u = service.login(
-                    dniField.getText(),
+            Usuario usuario = service.login(
+                    dniField.getText().trim().toUpperCase(),
                     passwordField.getText());
 
-            Session.setCurrentUser(u);
+            if (usuario == null) {
+                errorLabel.setText("Usuario o contraseña incorrectos");
+                return;
+            }
+
+            Session.setCurrentUser(usuario);
             ScreenManager.change("inicio.fxml");
 
         } catch (Exception e) {
@@ -81,7 +86,8 @@ public class LoginController {
 
         try {
 
-            if (registerPasswordField.getText().length() < 6) {
+            if (registerPasswordField.getText() == null ||
+                    registerPasswordField.getText().length() < 6) {
                 registerErrorLabel.setText("Contraseña demasiado corta");
                 return;
             }
@@ -89,16 +95,11 @@ public class LoginController {
             Usuario nuevo = new Usuario(
                     0,
                     nombreField.getText(),
-                    dniRegisterField.getText(),
+                    dniRegisterField.getText().trim().toUpperCase(),
                     emailField.getText(),
                     telefonoField.getText(),
                     tipoUsuarioBox.getValue(),
                     registerPasswordField.getText());
-
-            if (registerPasswordField.getText().length() < 6) {
-            System.out.println("Contraseña demasiado corta");
-            return;
-        }
 
             service.create(nuevo);
 
@@ -109,13 +110,13 @@ public class LoginController {
         }
     }
 
-    //abrir registro
+    // ABRIR REGISTRO
     @FXML
     private void abrirRegistro() {
         ScreenManager.change("register.fxml");
     }
 
-    //volver al login
+    // VOLVER LOGIN
     @FXML
     private void volverLogin() {
         ScreenManager.change("login.fxml");
