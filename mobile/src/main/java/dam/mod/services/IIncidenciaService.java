@@ -1,64 +1,66 @@
 package dam.mod.services;
 
 import java.util.List;
-
 import dam.mod.models.Incidencia;
 
+/**
+ * Interfaz que define las operaciones de negocio relacionadas con incidencias.
+ */
 public interface IIncidenciaService {
 
     /**
-     * Devuelve una lista de todas las incidencias.
+     * Devuelve todas las incidencias registradas en el sistema.
      *
-     * @return Lista de incidencias.
+     * @return lista de incidencias
      */
     List<Incidencia> findAll();
 
     /**
-     * Devuelve una incidencia por su ID.
+     * Busca una incidencia por su identificador.
      *
-     * @param id ID de la incidencia.
-     * @return Incidencia encontrada o null si no se encuentra.
+     * @param id ID de la incidencia
+     * @return incidencia encontrada o null si no existe
      */
     Incidencia findById(int id);
 
     /**
-     * Crea una nueva incidencia.
+     * Crea una nueva incidencia en el sistema.
      *
-     * @param incidencia Incidencia a crear.
-     * @return true si la creación fue exitosa, false en caso contrario.
+     * @param incidencia objeto incidencia a crear
+     * @return true si la creación fue correcta, false en caso contrario
      */
     boolean create(Incidencia incidencia);
 
     /**
      * Actualiza una incidencia existente.
      *
-     * @param incidencia Incidencia a actualizar.
-     * @return true si la actualización fue exitosa, false en caso contrario.
+     * @param incidencia objeto incidencia con datos actualizados
+     * @return true si la actualización fue correcta, false en caso contrario
      */
     boolean update(Incidencia incidencia);
 
     /**
-     * Elimina una incidencia por su ID.
+     * Elimina una incidencia por su identificador.
      *
-     * @param id ID de la incidencia.
-     * @return true si la eliminación fue exitosa, false en caso contrario.
+     * @param id ID de la incidencia
+     * @return true si la eliminación fue correcta, false en caso contrario
      */
     boolean delete(int id);
 
     /**
      * Cambia el estado de una incidencia.
      *
-     * @param idIncidencia ID de la incidencia.
-     * @param nuevoEstado Nuevo estado de la incidencia.
-     * @return true si el cambio de estado fue exitoso, false en caso contrario.
+     * @param idIncidencia ID de la incidencia
+     * @param nuevoEstado nuevo estado (ej: ABIERTA, EN_PROCESO, CERRADA)
+     * @return true si el cambio fue exitoso, false en caso contrario
      */
     boolean cambiarEstado(int idIncidencia, String nuevoEstado);
 
     /**
-     * Devuelve una lista de incidencias asociadas a un usuario específico.
+     * Obtiene todas las incidencias asociadas a un usuario.
      *
-     * @param idUsuario ID del usuario.
-     * @return Lista de incidencias del usuario.
+     * @param idUsuario ID del usuario
+     * @return lista de incidencias del usuario
      */
     List<Incidencia> findByUsuario(int idUsuario);
 }

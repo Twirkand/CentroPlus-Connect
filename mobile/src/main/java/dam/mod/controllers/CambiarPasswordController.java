@@ -7,24 +7,43 @@ import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
 import dam.mod.utils.ScreenManager;
 import dam.mod.utils.Session;
+import dam.mod.utils.PasswordUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
-import dam.mod.utils.*;
 
+/**
+ * Controlador encargado del cambio de contraseña del usuario.
+ *
+ * Permite validar la contraseña actual, comprobar la nueva contraseña
+ * y actualizarla en el sistema de forma segura.
+ */
 public class CambiarPasswordController {
 
+    /**
+     * Campo de contraseña actual.
+     */
     @FXML
     private PasswordField oldPasswordField;
 
+    /**
+     * Campo de nueva contraseña.
+     */
     @FXML
     private PasswordField newPasswordField;
 
+    /**
+     * Campo de repetición de nueva contraseña.
+     */
     @FXML
     private PasswordField repeatPasswordField;
 
     private IUsuarioService usuarioService;
 
-    //inicializacion
+    /**
+     * Inicializa el controlador.
+     *
+     * Verifica que el usuario esté autenticado e inicializa el servicio de usuarios.
+     */
     @FXML
     public void initialize() {
 
@@ -37,7 +56,12 @@ public class CambiarPasswordController {
         usuarioService = new UsuarioServiceImpl(repo);
     }
 
-    //Cambio de contraseña
+    /**
+     * Cambia la contraseña del usuario actual.
+     *
+     * Valida la contraseña actual, comprueba coincidencia de la nueva contraseña
+     * y actualiza el usuario en el sistema.
+     */
     @FXML
     private void cambiarPassword() {
 
@@ -75,7 +99,9 @@ public class CambiarPasswordController {
         }
     }
 
-    //volver
+    /**
+     * Vuelve a la pantalla de perfil.
+     */
     @FXML
     private void volver() {
         ScreenManager.change("perfil.fxml");
