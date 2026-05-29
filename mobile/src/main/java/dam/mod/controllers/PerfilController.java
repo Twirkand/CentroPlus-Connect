@@ -6,15 +6,45 @@ import dam.mod.utils.Session;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
+/**
+ * Controlador de la pantalla de perfil del usuario.
+ *
+ * Gestiona la visualización de los datos del usuario autenticado
+ * y permite acciones como cerrar sesión o cambiar contraseña.
+ */
 public class PerfilController {
 
+    /**
+     * Nombre del usuario.
+     */
     @FXML private Label lblNombre;
+
+    /**
+     * DNI del usuario.
+     */
     @FXML private Label lblDni;
+
+    /**
+     * Email del usuario.
+     */
     @FXML private Label lblEmail;
+
+    /**
+     * Teléfono del usuario.
+     */
     @FXML private Label lblTelefono;
+
+    /**
+     * Tipo de usuario (ALUMNO, SOCIO, etc.).
+     */
     @FXML private Label lblTipo;
 
-    //inicializacion
+    /**
+     * Inicializa la vista del perfil.
+     *
+     * Obtiene el usuario en sesión y carga sus datos en pantalla.
+     * Si no hay sesión activa, redirige al login.
+     */
     @FXML
     public void initialize() {
 
@@ -32,20 +62,26 @@ public class PerfilController {
         lblTipo.setText(u.getTipoUsuario());
     }
 
-    //volver al inicio
+    /**
+     * Vuelve a la pantalla principal.
+     */
     @FXML
     private void volver() {
         ScreenManager.change("inicio.fxml");
     }
 
-    //cerrar sesion
+    /**
+     * Cierra la sesión del usuario actual y redirige al login.
+     */
     @FXML
     private void cerrarSesion() {
         Session.logout();
         ScreenManager.change("login.fxml");
     }
 
-    //abrir aparado cambiar password
+    /**
+     * Abre la pantalla para cambiar la contraseña del usuario.
+     */
     @FXML
     private void abrirCambiarPassword() {
         ScreenManager.change("cambiar_password.fxml");

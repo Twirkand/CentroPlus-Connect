@@ -9,44 +9,85 @@ import dam.mod.utils.Session;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+/**
+ * Controlador de la pantalla de inicio de sesión y registro.
+ *
+ * Gestiona la autenticación de usuarios, registro de nuevos usuarios
+ * y navegación entre pantallas de login y registro.
+ */
 public class LoginController {
 
-    // SERVICE
-    private final IUsuarioService service = new UsuarioServiceImpl(new UsuarioRepository());
+    /**
+     * Servicio de usuarios para autenticación y gestión.
+     */
+    private final IUsuarioService service =
+            new UsuarioServiceImpl(new UsuarioRepository());
 
-    // LOGIN
+    /**
+     * Campo de entrada para el DNI en login.
+     */
     @FXML
     private TextField dniField;
 
+    /**
+     * Campo de entrada para la contraseña en login.
+     */
     @FXML
     private PasswordField passwordField;
 
+    /**
+     * Etiqueta para mostrar errores de login.
+     */
     @FXML
     private Label errorLabel;
 
-    // REGISTER
+    /**
+     * Campo de nombre en registro.
+     */
     @FXML
     private TextField nombreField;
 
+    /**
+     * Campo de DNI en registro.
+     */
     @FXML
     private TextField dniRegisterField;
 
+    /**
+     * Campo de email en registro.
+     */
     @FXML
     private TextField emailField;
 
+    /**
+     * Campo de teléfono en registro.
+     */
     @FXML
     private TextField telefonoField;
 
+    /**
+     * Campo de contraseña en registro.
+     */
     @FXML
     private PasswordField registerPasswordField;
 
+    /**
+     * Selector de tipo de usuario en registro.
+     */
     @FXML
     private ComboBox<String> tipoUsuarioBox;
 
+    /**
+     * Etiqueta para mostrar errores en registro.
+     */
     @FXML
     private Label registerErrorLabel;
 
-    // INIT
+    /**
+     * Inicializa el controlador.
+     *
+     * Carga los tipos de usuario disponibles en el ComboBox.
+     */
     @FXML
     public void initialize() {
 
@@ -54,18 +95,24 @@ public class LoginController {
             tipoUsuarioBox.getItems().addAll(
                     "ALUMNO",
                     "SOCIO",
-                    "AMBOS");
+                    "AMBOS"
+            );
         }
     }
 
-    // LOGIN
+    /**
+     * Gestiona el inicio de sesión del usuario.
+     *
+     * Valida credenciales, normaliza el DNI y establece la sesión si es correcto.
+     */
     @FXML
     private void handleLogin() {
 
         try {
             Usuario usuario = service.login(
                     dniField.getText().trim().toUpperCase(),
-                    passwordField.getText());
+                    passwordField.getText()
+            );
 
             if (usuario == null) {
                 errorLabel.setText("Usuario o contraseña incorrectos");
@@ -80,7 +127,11 @@ public class LoginController {
         }
     }
 
-    // REGISTER
+    /**
+     * Gestiona el registro de un nuevo usuario.
+     *
+     * Valida la contraseña, normaliza el DNI y crea el usuario en el sistema.
+     */
     @FXML
     private void handleRegister() {
 
@@ -99,7 +150,8 @@ public class LoginController {
                     emailField.getText(),
                     telefonoField.getText(),
                     tipoUsuarioBox.getValue(),
-                    registerPasswordField.getText());
+                    registerPasswordField.getText()
+            );
 
             service.create(nuevo);
 
@@ -110,34 +162,51 @@ public class LoginController {
         }
     }
 
-    // ABRIR REGISTRO
+    /**
+     * Abre la pantalla de registro.
+     */
     @FXML
     private void abrirRegistro() {
         ScreenManager.change("register.fxml");
     }
 
-    // VOLVER LOGIN
+    /**
+     * Vuelve a la pantalla de login.
+     */
     @FXML
     private void volverLogin() {
         ScreenManager.change("login.fxml");
     }
 
-    // IDIOMA
+    /**
+     * Cambia el idioma a español.
+     */
     @FXML
     private void setSpanish() {
         aplicarIdioma("es");
     }
 
+    /**
+     * Cambia el idioma a inglés.
+     */
     @FXML
     private void setEnglish() {
         aplicarIdioma("en");
     }
 
+    /**
+     * Cambia el idioma a alemán.
+     */
     @FXML
     private void setGerman() {
         aplicarIdioma("de");
     }
 
+    /**
+     * Aplica el idioma seleccionado.
+     *
+     * @param lang código del idioma
+     */
     private void aplicarIdioma(String lang) {
 
         switch (lang) {

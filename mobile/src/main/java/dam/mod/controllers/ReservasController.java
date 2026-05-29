@@ -26,21 +26,40 @@ import dam.mod.utils.ScreenManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 
+/**
+ * Controlador de la pantalla de reservas del usuario.
+ *
+ * Gestiona la visualización, carga y cancelación de reservas del usuario autenticado.
+ * Actúa como intermediario entre la vista y la capa de servicios.
+ */
 public class ReservasController {
 
+    /**
+     * Lista visual que muestra las reservas del usuario.
+     */
     @FXML
     private ListView<Reserva> listaReservas;
 
     private IReservaService reservaService;
     private IUsuarioService usuarioService;
 
-    //inicializacion
+    /**
+     * Inicializa el controlador.
+     *
+     * Se ejecuta automáticamente al cargar la vista.
+     * Crea repositorios, servicios y carga las reservas del usuario.
+     */
     @FXML
     public void initialize() {
 
+        /**
+         * Si no hay usuario en sesión, redirige al login.
+         */
         if (Session.getCurrentUser() == null) {
             ScreenManager.change("login.fxml");
+            return;
         }
+
         IReservaRepository reservaRepo = new ReservaRepository();
         IUsuarioRepository usuarioRepo = new UsuarioRepository();
         IActividadRepository actividadRepo = new ActividadRepository();
@@ -52,21 +71,29 @@ public class ReservasController {
         reservaService = new ReservaServiceImpl(
                 reservaRepo,
                 usuarioService,
-                actividadService);
+                actividadService
+        );
 
         cargarReservas();
     }
 
-    //Carga reservas
+    /**
+     * Carga las reservas del usuario autenticado en la lista.
+     */
     private void cargarReservas() {
 
         int idUsuario = Session.getCurrentUser().getId();
 
         listaReservas.getItems().setAll(
-                reservaService.findByIdUsuario(idUsuario));
+                reservaService.findByIdUsuario(idUsuario)
+        );
     }
 
-    //cancela reservas
+    /**
+     * Cancela la reserva seleccionada.
+     *
+     * Si la cancelación es correcta, actualiza la lista de reservas.
+     */
     @FXML
     private void cancelarReserva() {
 
@@ -76,7 +103,10 @@ public class ReservasController {
 
             int idUsuario = Session.getCurrentUser().getId();
 
-            boolean ok = reservaService.cancelarReserva(seleccionada.getId(), idUsuario);
+            boolean ok = reservaService.cancelarReserva(
+                    seleccionada.getId(),
+                    idUsuario
+            );
 
             if (ok) {
                 System.out.println("Reserva cancelada");
@@ -87,7 +117,9 @@ public class ReservasController {
         }
     }
 
-    //volver al inicio
+    /**
+     * Vuelve a la pantalla principal.
+     */
     @FXML
     private void volver() {
         ScreenManager.change("inicio.fxml");
