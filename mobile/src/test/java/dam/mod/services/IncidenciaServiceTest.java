@@ -41,8 +41,6 @@ public class IncidenciaServiceTest {
         usuarioValido = new Usuario(2, "Ana", "12345678A", "ana@example.com", "600000000", "ALUMNO", "pass");
     }
 
-    // ── findAll ───────────────────────────────────────────────────────────
-
     @DisplayName("findAll: devuelve la lista del repositorio")
     @Order(1)
     @Test
@@ -60,8 +58,6 @@ public class IncidenciaServiceTest {
         Assertions.assertTrue(service.findAll().isEmpty());
     }
 
-    // ── findById ──────────────────────────────────────────────────────────
-
     @DisplayName("findById: devuelve incidencia cuando existe")
     @Order(3)
     @Test
@@ -77,8 +73,6 @@ public class IncidenciaServiceTest {
         when(repositoryMock.findById(anyInt())).thenReturn(null);
         Assertions.assertNull(service.findById(99));
     }
-
-    // ── create ────────────────────────────────────────────────────────────
 
     @DisplayName("create: incidencia válida con usuario existente devuelve true")
     @Order(5)
@@ -133,8 +127,6 @@ public class IncidenciaServiceTest {
                 () -> service.create(invalida));
     }
 
-    // ── update ────────────────────────────────────────────────────────────
-
     @DisplayName("update: incidencia válida devuelve true")
     @Order(11)
     @Test
@@ -160,8 +152,6 @@ public class IncidenciaServiceTest {
                 () -> service.update(invalida));
     }
 
-    // ── delete ────────────────────────────────────────────────────────────
-
     @DisplayName("delete: devuelve true cuando elimina correctamente")
     @Order(14)
     @Test
@@ -177,8 +167,6 @@ public class IncidenciaServiceTest {
         when(repositoryMock.delete(anyInt())).thenReturn(false);
         Assertions.assertFalse(service.delete(99));
     }
-
-    // ── cambiarEstado ─────────────────────────────────────────────────────
 
     @DisplayName("cambiarEstado: incidencia inexistente devuelve false")
     @Order(16)
@@ -224,8 +212,6 @@ public class IncidenciaServiceTest {
                 () -> Assertions.assertTrue(service.cambiarEstado(1, "CERRADA"))
         );
     }
-
-    // ── findByUsuario ─────────────────────────────────────────────────────
 
     @DisplayName("findByUsuario: devuelve solo las incidencias del usuario")
     @Order(20)

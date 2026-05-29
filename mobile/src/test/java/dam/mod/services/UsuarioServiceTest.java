@@ -30,7 +30,6 @@ class UsuarioServiceImplTest {
  
     private Usuario usuario;
  
-    // Mocks estáticos abiertos para toda la clase
     private MockedStatic<Validaciones> mockValidaciones;
     private MockedStatic<PasswordUtils> mockPasswordUtils;
  
@@ -47,8 +46,6 @@ class UsuarioServiceImplTest {
         mockValidaciones.close();
         mockPasswordUtils.close();
     }
- 
-    // ── findAll ──────────────────────────────────
  
     @Test
     void findAll_devuelveLista() {
@@ -67,8 +64,6 @@ class UsuarioServiceImplTest {
         assertTrue(service.findAll().isEmpty());
     }
  
-    // ── findById ─────────────────────────────────
- 
     @Test
     void findById_existente_devuelveUsuario() {
         when(repository.findById(1)).thenReturn(usuario);
@@ -83,8 +78,6 @@ class UsuarioServiceImplTest {
         assertNull(service.findById(99));
     }
  
-    // ── create ───────────────────────────────────
- 
     @Test
     void create_usuarioValido_returnTrue() {
         when(repository.save(usuario)).thenReturn(true);
@@ -95,11 +88,11 @@ class UsuarioServiceImplTest {
  
     @Test
     void create_usuarioNull_lanzaExcepcion() {
-        IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException excepcion = assertThrows(
             IllegalArgumentException.class,
             () -> service.create(null)
         );
-        assertEquals("Usuario no puede ser null", ex.getMessage());
+        assertEquals("Usuario no puede ser null", excepcion.getMessage());
         verifyNoInteractions(repository);
     }
  
@@ -109,8 +102,6 @@ class UsuarioServiceImplTest {
  
         assertFalse(service.create(usuario));
     }
- 
-    // ── update ───────────────────────────────────
  
     @Test
     void update_usuarioValido_returnTrue() {
@@ -122,15 +113,13 @@ class UsuarioServiceImplTest {
  
     @Test
     void update_usuarioNull_lanzaExcepcion() {
-        IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException excepcion = assertThrows(
             IllegalArgumentException.class,
             () -> service.update(null)
         );
-        assertEquals("Usuario no puede ser null", ex.getMessage());
+        assertEquals("Usuario no puede ser null", excepcion.getMessage());
         verifyNoInteractions(repository);
     }
- 
-    // ── delete ───────────────────────────────────
  
     @Test
     void delete_idExistente_returnTrue() {
@@ -146,8 +135,6 @@ class UsuarioServiceImplTest {
         assertFalse(service.delete(99));
     }
  
-    // ── login ────────────────────────────────────
- 
     @Test
     void login_credencialesCorrectas_devuelveUsuario() {
         when(repository.findByDni("12345678A")).thenReturn(usuario);
@@ -162,30 +149,30 @@ class UsuarioServiceImplTest {
  
     @Test
     void login_dniNull_lanzaExcepcion() {
-        IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException excepcion = assertThrows(
             IllegalArgumentException.class,
             () -> service.login(null, "pass123")
         );
-        assertEquals("DNI obligatorio", ex.getMessage());
+        assertEquals("DNI obligatorio", excepcion.getMessage());
         verifyNoInteractions(repository);
     }
  
     @Test
     void login_dniVacio_lanzaExcepcion() {
-        IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException excepcion = assertThrows(
             IllegalArgumentException.class,
             () -> service.login("  ", "pass123")
         );
-        assertEquals("DNI obligatorio", ex.getMessage());
+        assertEquals("DNI obligatorio", excepcion.getMessage());
     }
  
     @Test
     void login_passwordNull_lanzaExcepcion() {
-        IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException excepcion = assertThrows(
             IllegalArgumentException.class,
             () -> service.login("12345678A", null)
         );
-        assertEquals("Password obligatoria", ex.getMessage());
+        assertEquals("Password obligatoria", excepcion.getMessage());
         verifyNoInteractions(repository);
     }
  
@@ -202,11 +189,11 @@ class UsuarioServiceImplTest {
     void login_usuarioNoExiste_lanzaExcepcion() {
         when(repository.findByDni("00000000X")).thenReturn(null);
  
-        RuntimeException ex = assertThrows(
+        RuntimeException excepcion = assertThrows(
             RuntimeException.class,
             () -> service.login("00000000X", "pass123")
         );
-        assertEquals("Usuario no existe", ex.getMessage());
+        assertEquals("Usuario no existe", excepcion.getMessage());
     }
  
     @Test
@@ -215,14 +202,12 @@ class UsuarioServiceImplTest {
         mockPasswordUtils.when(() -> PasswordUtils.checkPassword("mal", usuario.getPassword()))
                          .thenReturn(false);
  
-        RuntimeException ex = assertThrows(
+        RuntimeException excepcion = assertThrows(
             RuntimeException.class,
             () -> service.login("12345678A", "mal")
         );
-        assertEquals("Credenciales incorrectas", ex.getMessage());
+        assertEquals("Credenciales incorrectas", excepcion.getMessage());
     }
- 
-    // ── findByDni ────────────────────────────────
  
     @Test
     void findByDni_dniValido_devuelveUsuario() {
@@ -233,21 +218,21 @@ class UsuarioServiceImplTest {
  
     @Test
     void findByDni_dniNull_lanzaExcepcion() {
-        IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException excepcion = assertThrows(
             IllegalArgumentException.class,
             () -> service.findByDni(null)
         );
-        assertEquals("DNI obligatorio", ex.getMessage());
+        assertEquals("DNI obligatorio", excepcion.getMessage());
         verifyNoInteractions(repository);
     }
  
     @Test
     void findByDni_dniVacio_lanzaExcepcion() {
-        IllegalArgumentException ex = assertThrows(
+        IllegalArgumentException excepcion = assertThrows(
             IllegalArgumentException.class,
             () -> service.findByDni("")
         );
-        assertEquals("DNI obligatorio", ex.getMessage());
+        assertEquals("DNI obligatorio", excepcion.getMessage());
     }
  
     @Test

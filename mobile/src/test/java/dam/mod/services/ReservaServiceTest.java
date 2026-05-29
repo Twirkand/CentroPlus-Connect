@@ -45,8 +45,6 @@ public class ReservaServiceTest {
         actividadValida = new Actividad(3, "Yoga", "DEPORTIVA", 60, 15.0, 10, 3);
     }
 
-    // ── findAll ───────────────────────────────────────────────────────────
-
     @DisplayName("findAll: devuelve la lista del repositorio")
     @Order(1)
     @Test
@@ -63,8 +61,6 @@ public class ReservaServiceTest {
         Assertions.assertTrue(service.findAll().isEmpty());
     }
 
-    // ── findById ──────────────────────────────────────────────────────────
-
     @DisplayName("findById: devuelve reserva cuando existe")
     @Order(3)
     @Test
@@ -80,8 +76,6 @@ public class ReservaServiceTest {
         when(repositoryMock.findById(anyInt())).thenReturn(null);
         Assertions.assertNull(service.findById(99));
     }
-
-    // ── create ────────────────────────────────────────────────────────────
 
     @DisplayName("create: reserva válida devuelve true")
     @Order(5)
@@ -156,8 +150,6 @@ public class ReservaServiceTest {
                 () -> service.create(reservaValida));
     }
 
-    // ── update ────────────────────────────────────────────────────────────
-
     @DisplayName("update: reserva válida devuelve true")
     @Order(12)
     @Test
@@ -183,8 +175,6 @@ public class ReservaServiceTest {
                 () -> service.update(invalida));
     }
 
-    // ── delete ────────────────────────────────────────────────────────────
-
     @DisplayName("delete: devuelve true cuando elimina correctamente")
     @Order(15)
     @Test
@@ -200,8 +190,6 @@ public class ReservaServiceTest {
         when(repositoryMock.delete(anyInt())).thenReturn(false);
         Assertions.assertFalse(service.delete(99));
     }
-
-    // ── cancelarReserva ───────────────────────────────────────────────────
 
     @DisplayName("cancelarReserva: reserva inexistente devuelve false")
     @Order(17)
@@ -232,8 +220,6 @@ public class ReservaServiceTest {
         verify(actividadServiceMock).cancelarPlaza(3);
         verify(repositoryMock).delete(1);
     }
-
-    // ── reservar ──────────────────────────────────────────────────────────
 
     @DisplayName("reservar: flujo completo correcto devuelve true")
     @Order(20)
@@ -291,8 +277,6 @@ public class ReservaServiceTest {
                 () -> service.reservar(3, 2));
     }
 
-    // ── yaReservado / existeReservaUsuarioActividad ───────────────────────
-
     @DisplayName("yaReservado: devuelve true cuando existe la reserva")
     @Order(25)
     @Test
@@ -317,8 +301,6 @@ public class ReservaServiceTest {
         Assertions.assertTrue(service.existeReservaUsuarioActividad(2, 3));
     }
 
-    // ── comprobarPlazasDisponibles ─────────────────────────────────────────
-
     @DisplayName("comprobarPlazasDisponibles: devuelve true cuando hay plazas")
     @Order(28)
     @Test
@@ -334,8 +316,6 @@ public class ReservaServiceTest {
         when(actividadServiceMock.calcularPlazasDisponibles(3)).thenReturn(0);
         Assertions.assertFalse(service.comprobarPlazasDisponibles(3));
     }
-
-    // ── findByIdUsuario ───────────────────────────────────────────────────
 
     @DisplayName("findByIdUsuario: devuelve reservas del usuario")
     @Order(30)
