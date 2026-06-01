@@ -180,4 +180,21 @@ public class ReservaRepository implements IReservaRepository {
 
         return reservas;
     }
+
+    @Override
+    public boolean cambiarEstado(int idReserva, String nuevoEstado) {
+        String sql = "UPDATE reservas SET estado = ? WHERE id = ?";
+
+        try (Connection connection = ConnectionManager.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, nuevoEstado);
+            preparedStatement.setInt(2, idReserva);
+
+            return preparedStatement.executeUpdate() > 0;
+
+        } catch (SQLException exception) {
+            throw new RuntimeException("Error al cambiar estado de la reserva", exception);
+        }
+    }
 }

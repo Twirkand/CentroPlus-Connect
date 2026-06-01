@@ -1,6 +1,9 @@
 package dam.mod.controllers;
 
+import java.util.List;
+
 import dam.mod.models.Actividad;
+import dam.mod.models.Reserva;
 import dam.mod.models.Usuario;
 import dam.mod.repositories.IActividadRepository;
 import dam.mod.repositories.IReservaRepository;
@@ -65,16 +68,17 @@ public class DetalleActividadController {
     /**
      * Establece la actividad seleccionada.
      *
-     * @param a actividad seleccionada
+     * @param actividad actividad seleccionada
      */
-    public static void setActividad(Actividad a) {
-        actividadSeleccionada = a;
+    public static void setActividad(Actividad actividad) {
+        actividadSeleccionada = actividad;
     }
 
     /**
      * Inicializa el controlador.
      *
-     * Verifica sesión activa, inicializa servicios y carga los datos de la actividad.
+     * Verifica sesión activa, inicializa servicios y carga los datos de la
+     * actividad.
      */
     @FXML
     public void initialize() {
@@ -96,8 +100,7 @@ public class DetalleActividadController {
         reservaService = new ReservaServiceImpl(
                 reservaRepo,
                 usuarioService,
-                actividadService
-        );
+                actividadService);
 
         if (actividadSeleccionada != null) {
             cargarDatos();
@@ -114,9 +117,7 @@ public class DetalleActividadController {
         lblDuracion.setText("Duración: " + actividadSeleccionada.getDuracion() + " min");
         lblPrecio.setText("Precio: " + actividadSeleccionada.getPrecio() + " €");
 
-        int disponibles =
-                actividadSeleccionada.getPlazasMaximas()
-                        - actividadSeleccionada.getPlazasOcupadas();
+        int disponibles = actividadSeleccionada.getPlazasMaximas() - actividadSeleccionada.getPlazasOcupadas();
 
         lblPlazas.setText("Plazas disponibles: " + disponibles);
     }
@@ -132,14 +133,26 @@ public class DetalleActividadController {
         int usuarioId = Session.getCurrentUser().getId();
         int actividadId = actividadSeleccionada.getId();
 
-        if (reservaService.yaReservado(actividadId, usuarioId)) {
+        List<Reserva> reservasUsuario = reservaService.findByIdUsuario(usuarioId);
+
+        boolean yaTieneActiva = false;
+
+        for (Reserva reserva : reservasUsuario) {
+
+            if (reserva.getIdActividad() == actividadId &&
+                    "ACTIVA".equals(reserva.getEstado())) {
+
+                yaTieneActiva = true;
+                break;
+            }
+        }
+
+        if (yaTieneActiva) {
             System.out.println("Ya tienes esta actividad reservada");
             return;
         }
 
-        int disponibles =
-                actividadSeleccionada.getPlazasMaximas()
-                        - actividadSeleccionada.getPlazasOcupadas();
+        int disponibles = actividadSeleccionada.getPlazasMaximas() - actividadSeleccionada.getPlazasOcupadas();
 
         if (disponibles <= 0) {
             System.out.println("No hay plazas disponibles");
@@ -150,8 +163,7 @@ public class DetalleActividadController {
 
         if (ok) {
 
-            actividadSeleccionada =
-                    actividadService.findById(actividadId);
+            actividadSeleccionada = actividadService.findById(actividadId);
 
             cargarDatos();
 

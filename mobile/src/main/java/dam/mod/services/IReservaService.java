@@ -99,4 +99,14 @@ public interface IReservaService {
      * @return lista de reservas del usuario
      */
     List<Reserva> findByIdUsuario(int idUsuario);
+
+    /**
+     * Cambia el estado de la reserva
+     * 
+     * @param idReserva ID de la reserva
+     * @param nuevoEstado El nuevo estado
+     * @return Cambio de reserva true/false
+     */
+    boolean cambiarEstado(int idReserva, String nuevoEstado);
+
 }

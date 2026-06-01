@@ -131,8 +131,22 @@ public class ReservaServiceImpl implements IReservaService {
             throw new IllegalArgumentException("No hay plazas disponibles");
         }
 
-        if (yaReservado(actividadId, usuarioId)) {
-            throw new IllegalArgumentException("Ya tienes una reserva para esta actividad");
+        List<Reserva> reservasUsuario = repository.findByIdUsuario(usuarioId);
+
+        boolean existeActiva = false;
+
+        for (Reserva reserva : reservasUsuario) {
+
+            if (reserva.getIdActividad() == actividadId &&
+                    "ACTIVA".equals(reserva.getEstado())) {
+
+                existeActiva = true;
+                break;
+            }
+        }
+
+        if (existeActiva) {
+            throw new IllegalArgumentException("Ya tienes una reserva activa para esta actividad");
         }
 
         actividadService.reservarPlaza(actividadId);
@@ -150,5 +164,29 @@ public class ReservaServiceImpl implements IReservaService {
     @Override
     public List<Reserva> findByIdUsuario(int idUsuario) {
         return repository.findByIdUsuario(idUsuario);
+    }
+
+    @Override
+    public boolean cambiarEstado(int idReserva, String nuevoEstado) {
+
+        Reserva reserva = findById(idReserva);
+
+        if (reserva == null) {
+            throw new IllegalArgumentException("La reserva no existe");
+        }
+
+        Validaciones.validarEstadoReserva(nuevoEstado);
+
+        if ("CANCELADA".equals(nuevoEstado) && !"CANCELADA".equals(reserva.getEstado())) {
+            actividadService.cancelarPlaza(reserva.getIdActividad());
+        }
+
+        if ("ACTIVA".equals(nuevoEstado) && "CANCELADA".equals(reserva.getEstado())) {
+            actividadService.reservarPlaza(reserva.getIdActividad());
+        }
+
+        reserva.setEstado(nuevoEstado);
+
+        return repository.update(reserva);
     }
 }

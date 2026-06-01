@@ -10,11 +10,10 @@ public class Reserva {
     private LocalDate fecha;
     private String estado;
 
-    
     private String nombreActividad;
 
     public Reserva(int id, int idUsuario, int idActividad,
-                   LocalDate fecha, String estado) {
+            LocalDate fecha, String estado) {
         this.id = id;
         this.idUsuario = idUsuario;
         this.idActividad = idActividad;
@@ -78,6 +77,10 @@ public class Reserva {
         if (id != other.id)
             return false;
         return true;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
 }

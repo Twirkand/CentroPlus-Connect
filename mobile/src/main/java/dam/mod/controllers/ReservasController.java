@@ -29,7 +29,8 @@ import javafx.scene.control.ListView;
 /**
  * Controlador de la pantalla de reservas del usuario.
  *
- * Gestiona la visualización, carga y cancelación de reservas del usuario autenticado.
+ * Gestiona la visualización, carga y cancelación de reservas del usuario
+ * autenticado.
  * Actúa como intermediario entre la vista y la capa de servicios.
  */
 public class ReservasController {
@@ -71,8 +72,7 @@ public class ReservasController {
         reservaService = new ReservaServiceImpl(
                 reservaRepo,
                 usuarioService,
-                actividadService
-        );
+                actividadService);
 
         cargarReservas();
     }
@@ -85,8 +85,7 @@ public class ReservasController {
         int idUsuario = Session.getCurrentUser().getId();
 
         listaReservas.getItems().setAll(
-                reservaService.findByIdUsuario(idUsuario)
-        );
+                reservaService.findByIdUsuario(idUsuario));
     }
 
     /**
@@ -99,21 +98,26 @@ public class ReservasController {
 
         Reserva seleccionada = listaReservas.getSelectionModel().getSelectedItem();
 
-        if (seleccionada != null) {
+        if (seleccionada == null) {
+            return;
+        }
 
-            int idUsuario = Session.getCurrentUser().getId();
+        int idUsuario = Session.getCurrentUser().getId();
 
-            boolean ok = reservaService.cancelarReserva(
-                    seleccionada.getId(),
-                    idUsuario
-            );
+        if (seleccionada.getIdUsuario() != idUsuario) {
+            System.out.println("No tienes permisos para cancelar esta reserva");
+            return;
+        }
 
-            if (ok) {
-                System.out.println("Reserva cancelada");
-                cargarReservas();
-            } else {
-                System.out.println("No se pudo cancelar");
-            }
+        boolean ok = reservaService.cambiarEstado(
+                seleccionada.getId(),
+                "CANCELADA");
+
+        if (ok) {
+            System.out.println("Reserva cancelada");
+            cargarReservas();
+        } else {
+            System.out.println("No se pudo cancelar");
         }
     }
 

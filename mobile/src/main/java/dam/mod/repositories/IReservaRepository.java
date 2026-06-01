@@ -11,4 +11,5 @@ public interface IReservaRepository {
     boolean delete(int id);
     boolean existsReserva(int actividadId, int usuarioId);
     List<Reserva> findByIdUsuario(int idUsuario);
+    boolean cambiarEstado(int idReserva, String nuevoEstado);
 }
