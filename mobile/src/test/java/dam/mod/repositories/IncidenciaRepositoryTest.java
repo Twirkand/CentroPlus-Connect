@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import dam.mod.models.Incidencia;
 import dam.mod.repositories.impl.IncidenciaRepository;
+import dam.mod.repositories.sqlite.ConnectionManager;
 
 @ExtendWith(MockitoExtension.class)
 public class IncidenciaRepositoryTest {

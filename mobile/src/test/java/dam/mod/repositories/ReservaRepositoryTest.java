@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import dam.mod.models.Reserva;
 import dam.mod.repositories.impl.ReservaRepository;
+import dam.mod.repositories.sqlite.ConnectionManager;
 
 @ExtendWith(MockitoExtension.class)
 public class ReservaRepositoryTest {

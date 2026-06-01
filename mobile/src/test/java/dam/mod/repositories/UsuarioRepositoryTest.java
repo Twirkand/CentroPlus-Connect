@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import dam.mod.models.Usuario;
 import dam.mod.repositories.impl.UsuarioRepository;
+import dam.mod.repositories.sqlite.ConnectionManager;
 import dam.mod.utils.PasswordUtils;
 
 @ExtendWith(MockitoExtension.class)

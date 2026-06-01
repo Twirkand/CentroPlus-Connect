@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dam.mod.models.Actividad;
-import dam.mod.repositories.ConnectionManager;
 import dam.mod.repositories.IActividadRepository;
+import dam.mod.repositories.sqlite.ConnectionManager;
 
 public class ActividadRepository implements IActividadRepository {
 

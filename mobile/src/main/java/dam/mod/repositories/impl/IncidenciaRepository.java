@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dam.mod.models.Incidencia;
-import dam.mod.repositories.ConnectionManager;
 import dam.mod.repositories.IIncidenciaRepository;
+import dam.mod.repositories.sqlite.ConnectionManager;
 
 public class IncidenciaRepository implements IIncidenciaRepository {
 

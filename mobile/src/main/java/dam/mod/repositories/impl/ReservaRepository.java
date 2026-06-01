@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dam.mod.models.Reserva;
-import dam.mod.repositories.ConnectionManager;
 import dam.mod.repositories.IReservaRepository;
+import dam.mod.repositories.sqlite.ConnectionManager;
 
 public class ReservaRepository implements IReservaRepository {
 

@@ -1,4 +1,4 @@
-package dam.mod.repositories;
+package dam.mod.repositories.sqlite;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

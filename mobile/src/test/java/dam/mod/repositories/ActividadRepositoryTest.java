@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import dam.mod.models.Actividad;
 import dam.mod.repositories.impl.ActividadRepository;
+import dam.mod.repositories.sqlite.ConnectionManager;
 
 @ExtendWith(MockitoExtension.class)
 public class ActividadRepositoryTest {
