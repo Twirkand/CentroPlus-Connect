@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "nombre": "Yoga Matutino",
+  "tipoActividad": "Bienestar",
+  "duracion": 60,
+  "precio": 15.50,
+  "plazasMaximas": 20,
+  "plazasOcupadas": 12
+}

@@ -1,0 +1,9 @@
+{
+  "id": 5,
+  "nombre": "Carlos Hernández",
+  "dni": "12345678Z",
+  "email": "carlos.hernandez@example.com",
+  "telefono": "612345678",
+  "tipoUsuario": "Cliente",
+  "password": "ClaveSegura123"
+}

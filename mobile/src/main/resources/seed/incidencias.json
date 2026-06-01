@@ -1,0 +1,8 @@
+{
+  "id": 101,
+  "idUsuario": 5,
+  "asunto": "Error en la reserva",
+  "descripcion": "El usuario no puede completar la reserva de la actividad.",
+  "fecha": "2026-06-01",
+  "estado": "Pendiente"
+}
