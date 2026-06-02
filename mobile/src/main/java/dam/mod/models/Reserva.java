@@ -13,6 +13,9 @@ public class Reserva {
     
     private String nombreActividad;
 
+    public Reserva() {
+    }
+
     public Reserva(int id, int idUsuario, int idActividad,
                    LocalDate fecha, String estado) {
         this.id = id;
@@ -48,6 +51,26 @@ public class Reserva {
 
     public void setNombreActividad(String nombreActividad) {
         this.nombreActividad = nombreActividad;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public void setIdActividad(int idActividad) {
+        this.idActividad = idActividad;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     @Override
