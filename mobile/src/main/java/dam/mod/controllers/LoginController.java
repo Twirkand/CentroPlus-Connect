@@ -1,6 +1,7 @@
 package dam.mod.controllers;
 
 import dam.mod.models.Usuario;
+import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
 import dam.mod.repositories.impl.UsuarioRepository;
 import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
@@ -21,7 +22,8 @@ public class LoginController {
     /**
      * Servicio de usuarios para autenticación y gestión.
      */
-    private final IUsuarioService service = new UsuarioServiceImpl(new UsuarioRepository());
+    private final IUsuarioService service = new UsuarioServiceImpl(new UsuarioRepository(),
+            new RememberTokenRepositoryImpl());
 
     /**
      * Campo de entrada para el DNI en login.
@@ -78,6 +80,12 @@ public class LoginController {
     private ComboBox<String> tipoUsuarioBox;
 
     /**
+     * Recuerdame
+     */
+    @FXML
+    private CheckBox rememberMeCheckBox;
+
+    /**
      * Etiqueta para mostrar errores en registro.
      */
     @FXML
@@ -92,10 +100,18 @@ public class LoginController {
     public void initialize() {
 
         if (tipoUsuarioBox != null) {
-            tipoUsuarioBox.getItems().addAll(
-                    "ALUMNO",
-                    "SOCIO",
-                    "AMBOS");
+            tipoUsuarioBox.getItems().addAll("ALUMNO", "SOCIO", "AMBOS");
+        }
+
+        String token = Session.getTokenSesionGuardado();
+
+        if (token != null && !token.isBlank()) {
+            Usuario usuario = service.autoLogin();
+
+            if (usuario != null) {
+                Session.setCurrentUser(usuario);
+                ScreenManager.change("inicio.fxml");
+            }
         }
     }
 
@@ -110,12 +126,8 @@ public class LoginController {
         try {
             Usuario usuario = service.login(
                     dniField.getText().trim().toUpperCase(),
-                    passwordField.getText());
-
-            if (usuario == null) {
-                errorLabel.setText("Usuario o contraseña incorrectos");
-                return;
-            }
+                    passwordField.getText(),
+                    rememberMeCheckBox.isSelected());
 
             Session.setCurrentUser(usuario);
             ScreenManager.change("inicio.fxml");
@@ -215,4 +227,5 @@ public class LoginController {
 
         ScreenManager.change(ScreenManager.getCurrentScreen());
     }
+
 }

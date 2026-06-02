@@ -2,6 +2,7 @@ package dam.mod.controllers;
 
 import dam.mod.models.Usuario;
 import dam.mod.repositories.IUsuarioRepository;
+import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
 import dam.mod.repositories.impl.UsuarioRepository;
 import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
@@ -53,7 +54,7 @@ public class CambiarPasswordController {
         }
 
         IUsuarioRepository repo = new UsuarioRepository();
-        usuarioService = new UsuarioServiceImpl(repo);
+        usuarioService = new UsuarioServiceImpl(repo, new RememberTokenRepositoryImpl());
     }
 
     /**

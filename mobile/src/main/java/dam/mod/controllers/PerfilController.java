@@ -1,6 +1,9 @@
 package dam.mod.controllers;
 
 import dam.mod.models.Usuario;
+import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
+import dam.mod.services.IUsuarioService;
+import dam.mod.services.impl.UsuarioServiceImpl;
 import dam.mod.utils.ScreenManager;
 import dam.mod.utils.Session;
 import javafx.fxml.FXML;
@@ -14,30 +17,41 @@ import javafx.scene.control.Label;
  */
 public class PerfilController {
 
+    private IUsuarioService service;
+
+    public void setService(IUsuarioService service) {
+        this.service = service;
+    }
+
     /**
      * Nombre del usuario.
      */
-    @FXML private Label lblNombre;
+    @FXML
+    private Label lblNombre;
 
     /**
      * DNI del usuario.
      */
-    @FXML private Label lblDni;
+    @FXML
+    private Label lblDni;
 
     /**
      * Email del usuario.
      */
-    @FXML private Label lblEmail;
+    @FXML
+    private Label lblEmail;
 
     /**
      * Teléfono del usuario.
      */
-    @FXML private Label lblTelefono;
+    @FXML
+    private Label lblTelefono;
 
     /**
      * Tipo de usuario (ALUMNO, SOCIO, etc.).
      */
-    @FXML private Label lblTipo;
+    @FXML
+    private Label lblTipo;
 
     /**
      * Inicializa la vista del perfil.
@@ -75,7 +89,7 @@ public class PerfilController {
      */
     @FXML
     private void cerrarSesion() {
-        Session.logout();
+        service.logout();
         ScreenManager.change("login.fxml");
     }
 
@@ -86,4 +100,5 @@ public class PerfilController {
     private void abrirCambiarPassword() {
         ScreenManager.change("cambiar_password.fxml");
     }
+
 }
