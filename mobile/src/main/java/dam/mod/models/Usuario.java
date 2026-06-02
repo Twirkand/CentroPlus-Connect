@@ -1,5 +1,7 @@
 package dam.mod.models;
 
+import dam.mod.utils.Validaciones;
+
 public class Usuario {
 
     private int id;
@@ -70,6 +72,16 @@ public class Usuario {
         if (id != other.id)
             return false;
         return true;
+    }
+
+    public void setEmail(String email) {
+        Validaciones.validarEmail(email);
+        this.email = email;
+    }
+
+    public void setTelefono(String telefono) {
+        Validaciones.validarTelefono(telefono);
+        this.telefono = telefono;
     }
     
 }

@@ -101,4 +101,14 @@ public class PerfilController {
         ScreenManager.change("cambiar_password.fxml");
     }
 
+    @FXML
+    private void abrirCambiarEmail() {
+        ScreenManager.change("cambiar_email.fxml");
+    }
+
+    @FXML
+    private void abrirCambiarTelefono() {
+        ScreenManager.change("cambiar_telefono.fxml");
+    }
+
 }

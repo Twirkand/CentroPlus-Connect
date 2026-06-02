@@ -2,6 +2,8 @@ package dam.mod.models;
 
 import java.time.LocalDate;
 
+import dam.mod.utils.Validaciones;
+
 public class Reserva {
 
     private int id;
@@ -80,6 +82,7 @@ public class Reserva {
     }
 
     public void setEstado(String estado) {
+        Validaciones.validarEstadoReserva(estado);
         this.estado = estado;
     }
 

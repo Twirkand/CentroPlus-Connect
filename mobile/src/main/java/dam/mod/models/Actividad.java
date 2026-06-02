@@ -4,13 +4,12 @@ import java.util.Objects;
 
 public class Actividad {
 
-    
-    public Actividad(){}
-
-    public Actividad(int id){
-        this.id=id;
+    public Actividad() {
     }
 
+    public Actividad(int id) {
+        this.id = id;
+    }
 
     private int id;
     private String nombre;
@@ -21,8 +20,8 @@ public class Actividad {
     private int plazasOcupadas;
 
     public Actividad(int id, String nombre, String tipoActividad,
-                     int duracion, double precio,
-                     int plazasMaximas, int plazasOcupadas) {
+            int duracion, double precio,
+            int plazasMaximas, int plazasOcupadas) {
         this.id = id;
         this.nombre = nombre;
         this.tipoActividad = tipoActividad;
@@ -32,19 +31,39 @@ public class Actividad {
         this.plazasOcupadas = plazasOcupadas;
     }
 
-    public int getId() { return id; }
-    public String getNombre() { return nombre; }
-    public String getTipoActividad() { return tipoActividad; }
-    public int getDuracion() { return duracion; }
-    public double getPrecio() { return precio; }
-    public int getPlazasMaximas() { return plazasMaximas; }
-    public int getPlazasOcupadas() { return plazasOcupadas; }
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getTipoActividad() {
+        return tipoActividad;
+    }
+
+    public int getDuracion() {
+        return duracion;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public int getPlazasMaximas() {
+        return plazasMaximas;
+    }
+
+    public int getPlazasOcupadas() {
+        return plazasOcupadas;
+    }
 
     public void setPlazasOcupadas(int plazasOcupadas) {
         this.plazasOcupadas = plazasOcupadas;
     }
 
-    public int plazasDisponibles(){
+    public int plazasDisponibles() {
         return plazasMaximas - plazasOcupadas;
     }
 
@@ -69,5 +88,5 @@ public class Actividad {
         Actividad other = (Actividad) obj;
         return id == other.id;
     }
-    
+
 }

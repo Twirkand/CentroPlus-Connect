@@ -3,6 +3,8 @@ package dam.mod.models;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import dam.mod.utils.Validaciones;
+
 public class Incidencia {
 
     private int id;
@@ -12,19 +14,19 @@ public class Incidencia {
     private LocalDate fecha;
     private String estado;
 
-    /** 
+    /**
      * Constructor por defecto
-    */
+     */
     public Incidencia() {
 
     }
 
-    public Incidencia(int id){
+    public Incidencia(int id) {
         this.id = id;
     }
 
     public Incidencia(int id, String asunto,
-                      String descripcion, LocalDate fecha) {
+            String descripcion, LocalDate fecha) {
         this.id = id;
         this.asunto = asunto;
         this.descripcion = descripcion;
@@ -33,15 +35,16 @@ public class Incidencia {
 
     /**
      * Construcor de la clase incidencia
-     * @param id de la clase incidencia
-     * @param idUsuario de la clase incidencia
-     * @param asunto de la clase incidencia
+     * 
+     * @param id          de la clase incidencia
+     * @param idUsuario   de la clase incidencia
+     * @param asunto      de la clase incidencia
      * @param descripcion de la clase incidencia
-     * @param fecha de la clase incidencia
-     * @param estado de la clase incidencia
+     * @param fecha       de la clase incidencia
+     * @param estado      de la clase incidencia
      */
     public Incidencia(int id, int idUsuario, String asunto,
-                      String descripcion, LocalDate fecha, String estado) {
+            String descripcion, LocalDate fecha, String estado) {
         this.id = id;
         this.idUsuario = idUsuario;
         this.asunto = asunto;
@@ -50,18 +53,37 @@ public class Incidencia {
         this.estado = estado;
     }
 
-    public int getId() { return id; }
-    public int getIdUsuario() { return idUsuario; }
-    public String getAsunto() { return asunto; }
-    public String getDescripcion() { return descripcion; }
-    public LocalDate getFecha() { return fecha; }
-    public String getEstado() { return estado; }
+    public int getId() {
+        return id;
+    }
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public String getAsunto() {
+        return asunto;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
 
     public void setDescripcion(String descripcion) {
+        Validaciones.validarNoVacio(descripcion, descripcion);
         this.descripcion = descripcion;
     }
 
     public void setEstado(String estado) {
+        Validaciones.validarEstadoIncidencia(estado);
         this.estado = estado;
     }
 
@@ -87,5 +109,4 @@ public class Incidencia {
         return asunto + " - " + estado;
     }
 
-    
 }

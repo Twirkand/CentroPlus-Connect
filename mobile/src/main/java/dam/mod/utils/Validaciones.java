@@ -121,4 +121,17 @@ public final class Validaciones {
             throw new IllegalArgumentException(campo + " no puede estar vacío");
         }
     }
+
+public static void validarTelefono(String telefono) {
+
+    if (telefono == null) {
+        throw new IllegalArgumentException("Teléfono nulo");
+    }
+
+    String telefonoValido = telefono.replaceAll("[\\s-]", "");
+
+    if (!telefonoValido.matches("^(\\+34)?[0-9]{9}$")) {
+        throw new IllegalArgumentException("Teléfono inválido: " + telefono);
+    }
+}
 }
