@@ -137,10 +137,9 @@ class UsuarioServiceTest {
     @Test
     void login_credencialesCorrectas_devuelveUsuario() {
         when(repository.findByDni("12345678A")).thenReturn(usuario);
-        mockPasswordUtils.when(() -> PasswordUtils.checkPassword("pass123", usuario.getPassword()))
-                .thenReturn(true);
+        mockPasswordUtils.when(() -> PasswordUtils.checkPassword("pass123", usuario.getPassword())).thenReturn(true);
 
-        Usuario result = service.login("12345678A", "pass123");
+        Usuario result = service.login("12345678A", "pass123", false);
 
         assertNotNull(result);
         assertEquals("12345678A", result.getDni());
@@ -150,7 +149,8 @@ class UsuarioServiceTest {
     void login_dniNull_lanzaExcepcion() {
         IllegalArgumentException excepcion = assertThrows(
                 IllegalArgumentException.class,
-                () -> service.login(null, "pass123"));
+                () -> service.login(null, "pass123", false));
+
         assertEquals("DNI obligatorio", excepcion.getMessage());
         verifyNoInteractions(repository);
     }
@@ -159,7 +159,8 @@ class UsuarioServiceTest {
     void login_dniVacio_lanzaExcepcion() {
         IllegalArgumentException excepcion = assertThrows(
                 IllegalArgumentException.class,
-                () -> service.login("  ", "pass123"));
+                () -> service.login("  ", "pass123", false));
+
         assertEquals("DNI obligatorio", excepcion.getMessage());
     }
 
@@ -167,7 +168,8 @@ class UsuarioServiceTest {
     void login_passwordNull_lanzaExcepcion() {
         IllegalArgumentException excepcion = assertThrows(
                 IllegalArgumentException.class,
-                () -> service.login("12345678A", null));
+                () -> service.login("12345678A", null, false));
+
         assertEquals("Password obligatoria", excepcion.getMessage());
         verifyNoInteractions(repository);
     }
@@ -176,7 +178,8 @@ class UsuarioServiceTest {
     void login_passwordVacia_lanzaExcepcion() {
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> service.login("12345678A", ""));
+                () -> service.login("12345678A", "", false));
+
         assertEquals("Password obligatoria", ex.getMessage());
     }
 
@@ -186,19 +189,20 @@ class UsuarioServiceTest {
 
         RuntimeException excepcion = assertThrows(
                 RuntimeException.class,
-                () -> service.login("00000000X", "pass123"));
+                () -> service.login("00000000X", "pass123", false));
+
         assertEquals("Usuario no existe", excepcion.getMessage());
     }
 
     @Test
     void login_passwordIncorrecta_lanzaExcepcion() {
         when(repository.findByDni("12345678A")).thenReturn(usuario);
-        mockPasswordUtils.when(() -> PasswordUtils.checkPassword("mal", usuario.getPassword()))
-                .thenReturn(false);
+        mockPasswordUtils.when(() -> PasswordUtils.checkPassword("mal", usuario.getPassword())).thenReturn(false);
 
         RuntimeException excepcion = assertThrows(
                 RuntimeException.class,
-                () -> service.login("12345678A", "mal"));
+                () -> service.login("12345678A", "mal", false));
+
         assertEquals("Credenciales incorrectas", excepcion.getMessage());
     }
 

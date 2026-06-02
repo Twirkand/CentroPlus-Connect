@@ -4,6 +4,7 @@ import dam.mod.models.Incidencia;
 import dam.mod.repositories.IIncidenciaRepository;
 import dam.mod.repositories.IUsuarioRepository;
 import dam.mod.repositories.impl.IncidenciaRepository;
+import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
 import dam.mod.repositories.impl.UsuarioRepository;
 import dam.mod.services.IIncidenciaService;
 import dam.mod.services.IUsuarioService;
@@ -69,7 +70,7 @@ public class DetalleIncidenciaController {
         IUsuarioRepository usuarioRepo = new UsuarioRepository();
 
         IUsuarioService usuarioService =
-                new UsuarioServiceImpl(usuarioRepo);
+                new UsuarioServiceImpl(usuarioRepo, new RememberTokenRepositoryImpl());
 
         incidenciaService =
                 new IncidenciaServiceImpl(repo, usuarioService);

@@ -6,13 +6,25 @@ import dam.mod.models.Usuario;
 import dam.mod.repositories.IUsuarioRepository;
 import dam.mod.services.IUsuarioService;
 import dam.mod.utils.Validaciones;
+import dam.mod.repositories.IRememberTokenRepository;
+import dam.mod.models.RememberToken;
+import dam.mod.utils.Session;
+import dam.mod.utils.TokenUtils;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UsuarioServiceImpl implements IUsuarioService {
 
     private final IUsuarioRepository repository;
+    private final IRememberTokenRepository rememberTokenRepository;
 
-    public UsuarioServiceImpl(IUsuarioRepository repository) {
+    public UsuarioServiceImpl(IUsuarioRepository repository, IRememberTokenRepository rememberTokenRepository) {
         this.repository = repository;
+        this.rememberTokenRepository = rememberTokenRepository;
     }
 
     @Override
@@ -54,7 +66,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public Usuario login(String dni, String password) {
+    public Usuario login(String dni, String password, boolean rememberMe) {
 
         if (dni == null || dni.isBlank()) {
             throw new IllegalArgumentException("DNI obligatorio");
@@ -74,6 +86,24 @@ public class UsuarioServiceImpl implements IUsuarioService {
             throw new RuntimeException("Credenciales incorrectas");
         }
 
+        if (rememberMe) {
+
+            String token = UUID.randomUUID().toString();
+
+            String tokenHash = TokenUtils.sha256(token);
+
+            LocalDateTime expiresAt = LocalDateTime.now().plusDays(5);
+
+            rememberTokenRepository.saveToken(
+                    usuario.getId(),
+                    tokenHash,
+                    expiresAt.toString());
+
+            Session.setTokenSesion(token);
+        }
+
+        Session.setCurrentUser(usuario);
+
         return usuario;
     }
 
@@ -86,4 +116,51 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         return repository.findByDni(dni);
     }
+
+    @Override
+    public Usuario autoLogin() {
+
+        String token = Session.getTokenSesionGuardado();
+
+        if (token == null || token.isBlank()) {
+            return null;
+        }
+
+        String tokenHash = TokenUtils.sha256(token);
+
+        RememberToken t = rememberTokenRepository.findByHash(tokenHash);
+
+        if (t == null) {
+            Session.setTokenSesion(null);
+            return null;
+        }
+
+        Usuario usuario = repository.findById(t.getUserId());
+
+        if (usuario == null) {
+            Session.setTokenSesion(null);
+            return null;
+        }
+
+        Session.setCurrentUser(usuario);
+
+        return usuario;
+    }
+
+@Override
+public void logout() {
+    try {
+        Usuario usuario = Session.getCurrentUser();
+
+        if (usuario != null && rememberTokenRepository != null) {
+            rememberTokenRepository.deleteByUserId(usuario.getId());
+        }
+
+        Session.logout();
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
 }

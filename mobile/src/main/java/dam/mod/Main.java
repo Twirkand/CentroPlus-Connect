@@ -1,6 +1,7 @@
 package dam.mod;
 
 import dam.mod.models.Usuario;
+import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
 import dam.mod.repositories.impl.UsuarioRepository;
 import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
@@ -36,41 +37,37 @@ public class Main extends Application {
         /**
          * Servicio de usuarios con acceso a repositorio
          */
-        IUsuarioService service = new UsuarioServiceImpl(new UsuarioRepository());
+        IUsuarioService service = new UsuarioServiceImpl(
+                new UsuarioRepository(),
+                new RememberTokenRepositoryImpl()
+        );
 
         /**
-         * Recupera el ID de usuario guardado en sesión
+         * Registra el servicio en la sesión global de la aplicación
          */
-        int id = Session.getSavedUserId();
+        Session.setUsuarioService(service);
 
-        /**
-         * Si hay sesión guardada, recupera el usuario desde la BD
-         */
-        if (id != -1) {
-            Usuario usuario = service.findById(id);
+        Usuario usuario = service.autoLogin();
+
+        if (usuario != null) {
             Session.setCurrentUser(usuario);
+            ScreenManager.change("inicio.fxml");
+        } else {
+            ScreenManager.change("login.fxml");
         }
 
         /**
          * Configura el icono de la aplicación
          */
         stage.getIcons().add(
-                new Image(getClass().getResourceAsStream("/icons/app.png")));
+                new Image(getClass().getResourceAsStream("/icons/app.png"))
+        );
 
         /**
          * Configuración básica de la ventana
          */
         stage.setTitle("CentroPlus-Connect");
         stage.setResizable(false);
-
-        /**
-         * Decide qué pantalla mostrar si existe sesión
-         */
-        if (Session.getCurrentUser() != null) {
-            ScreenManager.change("inicio.fxml");
-        } else {
-            ScreenManager.change("login.fxml");
-        }
 
         /**
          * Muestra la ventana principal

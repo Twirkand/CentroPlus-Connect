@@ -10,7 +10,7 @@ import dam.mod.repositories.impl.UsuarioRepository;
 
 import dam.mod.repositories.IActividadRepository;
 import dam.mod.repositories.impl.ActividadRepository;
-
+import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
 import dam.mod.services.IReservaService;
 import dam.mod.services.impl.ReservaServiceImpl;
 
@@ -63,7 +63,7 @@ public class ReservasController {
         IUsuarioRepository usuarioRepo = new UsuarioRepository();
         IActividadRepository actividadRepo = new ActividadRepository();
 
-        IUsuarioService usuarioService = new UsuarioServiceImpl(usuarioRepo);
+        IUsuarioService usuarioService = new UsuarioServiceImpl(usuarioRepo, new RememberTokenRepositoryImpl());
 
         IActividadService actividadService = new ActividadServiceImpl(actividadRepo);
 

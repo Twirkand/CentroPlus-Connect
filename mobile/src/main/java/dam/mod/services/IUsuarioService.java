@@ -43,18 +43,21 @@ public interface IUsuarioService {
      * Elimina un usuario por su identificador.
      *
      * @param id ID del usuario
-     * @return true si el usuario fue eliminado correctamente, false en caso contrario
+     * @return true si el usuario fue eliminado correctamente, false en caso
+     *         contrario
      */
     boolean delete(int id);
 
     /**
      * Autentica un usuario en el sistema mediante DNI y contraseña.
      *
-     * @param dni identificador único del usuario
-     * @param password contraseña del usuario
-     * @return usuario autenticado si las credenciales son correctas, null en caso contrario
+     * @param dni        identificador único del usuario
+     * @param password   contraseña del usuario
+     * @param rememberMe Recuerdame
+     * @return usuario autenticado si las credenciales son correctas, null en caso
+     *         contrario
      */
-    Usuario login(String dni, String password);
+    Usuario login(String dni, String password, boolean rememberMe);
 
     /**
      * Busca un usuario por su DNI.
@@ -63,4 +66,18 @@ public interface IUsuarioService {
      * @return usuario encontrado o null si no existe
      */
     Usuario findByDni(String dni);
+
+    /**
+     * Intenta iniciar sesión automáticamente utilizando la información de autenticación almacenada previamente.
+     *
+     * @return El usuario autenticado si el inicio de sesión automático se realiza correctamente.
+     */
+    Usuario autoLogin();
+
+    /**
+     * Cierra la sesión del usuario actual.
+     *
+     * Elimina la información de autenticación almacenada y finaliza la sesión activa para impedir futuros accesos sin volver a iniciar sesión.
+     */
+    void logout();
 }

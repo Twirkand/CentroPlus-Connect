@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 
+import dam.mod.controllers.PerfilController;
+
 public class ScreenManager {
 
     /**
@@ -68,7 +70,8 @@ public class ScreenManager {
             /**
              * Convierte el FXML en una interfaz real
              */
-            Parent root = FXMLLoader.load(url);
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
 
             /**
              * Crea la escena
@@ -83,6 +86,11 @@ public class ScreenManager {
                 scene.getStylesheets().add(css.toExternalForm());
             }
 
+            Object controller = loader.getController();
+
+            if (controller instanceof PerfilController perfilController) {
+                perfilController.setService(Session.getUsuarioService());
+            }
             /**
              * Sustituye la pantalla anterior y muestra la nueva
              */
