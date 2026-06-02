@@ -73,11 +73,6 @@ public class LoginController {
     @FXML
     private PasswordField registerPasswordField;
 
-    /**
-     * Selector de tipo de usuario en registro.
-     */
-    @FXML
-    private ComboBox<String> tipoUsuarioBox;
 
     /**
      * Recuerdame
@@ -99,9 +94,6 @@ public class LoginController {
     @FXML
     public void initialize() {
 
-        if (tipoUsuarioBox != null) {
-            tipoUsuarioBox.getItems().addAll("ALUMNO", "SOCIO", "AMBOS");
-        }
 
         String token = Session.getTokenSesionGuardado();
 
@@ -159,7 +151,7 @@ public class LoginController {
                     dniRegisterField.getText().trim().toUpperCase(),
                     emailField.getText(),
                     telefonoField.getText(),
-                    tipoUsuarioBox.getValue(),
+                    "ALUMNO",
                     registerPasswordField.getText());
 
             service.create(nuevo);
