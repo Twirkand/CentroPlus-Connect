@@ -1,7 +1,6 @@
 package dam.mod.controllers;
 
 import dam.mod.models.Actividad;
-import dam.mod.models.Reserva;
 import dam.mod.models.Usuario;
 import dam.mod.services.IActividadService;
 import dam.mod.services.IReservaService;
@@ -18,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -117,35 +115,22 @@ class DetalleActividadControllerTest {
     }
 
     @Test
-    void reservar_yaTieneReservaActiva_noReserva()
-            throws Exception {
+void reservar_yaTieneReservaActiva_noReserva() throws Exception {
+    Actividad a = actividadMock(10, 3);
+    DetalleActividadController.setActividad(a);
 
-        try (MockedStatic<Session> sessionMock =
-                     mockStatic(Session.class)) {
+    try (MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+        Usuario user = usuarioMock(1);
+        sessionMock.when(Session::getCurrentUser).thenReturn(user);
 
-            Actividad a = actividadMock(10, 3);
+        // El controlador llama a yaReservado(), no a findByIdUsuario()
+        when(reservaService.yaReservado(a.getId(), 1)).thenReturn(true);
 
-            DetalleActividadController.setActividad(a);
+        invoke("reservar");
 
-            Usuario user = usuarioMock(1);
-
-            sessionMock.when(Session::getCurrentUser)
-                    .thenReturn(user);
-
-            Reserva reservaActiva = new Reserva();
-
-            reservaActiva.setIdActividad(a.getId());
-            reservaActiva.setEstado("ACTIVA");
-
-            when(reservaService.findByIdUsuario(1))
-                    .thenReturn(List.of(reservaActiva));
-
-            invoke("reservar");
-
-            verify(reservaService, never())
-                    .reservar(anyInt(), anyInt());
-        }
+        verify(reservaService, never()).reservar(anyInt(), anyInt());
     }
+}
 
     @Test
     void reservar_sinPlazas_noReserva()

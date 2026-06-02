@@ -139,31 +139,22 @@ class DetalleIncidenciaControllerTest {
     }
 
     @Test
-    void cerrarIncidencia_exito_recargaVista()
-            throws Exception {
+void cerrarIncidencia_exito_recargaVista() throws Exception {
+    Incidencia inc = incidenciaMock(1, "ABIERTA");
+    setField("inc", inc);
 
-        Incidencia inc = incidenciaMock(1, "ABIERTA");
-
-        setField("inc", inc);
-
-        when(incidenciaService
-                .cambiarEstado(1, "CERRADA"))
-                .thenReturn(true);
-
-        Incidencia incCerrada =
-                incidenciaMock(1, "CERRADA");
-
-        when(incidenciaService.findById(1))
-                .thenReturn(incCerrada);
+    try (MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
+        screenMock.when(ScreenManager::getIncidenciaId).thenReturn(1);
+        when(incidenciaService.cambiarEstado(1, "CERRADA")).thenReturn(true);
+        Incidencia incCerrada = incidenciaMock(1, "CERRADA");
+        when(incidenciaService.findById(1)).thenReturn(incCerrada);
 
         invoke("cerrarIncidencia");
 
-        verify(incidenciaService)
-                .cambiarEstado(1, "CERRADA");
-
-        verify(incidenciaService, atLeastOnce())
-                .findById(1);
+        verify(incidenciaService).cambiarEstado(1, "CERRADA");
+        verify(incidenciaService, atLeastOnce()).findById(1);
     }
+}
 
     @Test
     void cerrarIncidencia_error_noRecarga()
