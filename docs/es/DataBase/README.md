@@ -20,7 +20,7 @@ El modelo ha sido diseñado siguiendo un proceso completo de análisis: **modelo
 
 El modelo ER define las entidades principales del sistema y sus relaciones.
 
-<img src="./IMG/ER.png" width="600">
+<img src="../../../database/IMG/ER.png" width="600">
 
 **Entidades principales:**
 - Usuarios
@@ -44,7 +44,7 @@ Este modelo permite representar de forma conceptual la estructura del sistema an
 
 El modelo relacional transforma el modelo ER en tablas físicas.
 
-<img src="./IMG/MR.png" width="600">
+<img src="../../../database/IMG/MR.png" width="600">
 
 **Tablas principales:**
 - usuarios
