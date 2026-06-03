@@ -4,39 +4,40 @@
 <?import javafx.scene.control.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="dam.mod.controllers.IncidenciasController"
-      spacing="15"
-      alignment="CENTER"
-      prefWidth="390"
-      prefHeight="844"
-      style="-fx-padding: 15;">
-
+    fx:controller="dam.mod.controllers.IncidenciasController"
+    spacing="15"
+    alignment="CENTER"
+    prefWidth="390"
+    prefHeight="844"
+    style="-fx-padding: 15;">
 
     <HBox spacing="10" alignment="CENTER_LEFT">
-        <Button text="← Volver" onAction="#volver"/>
-        <Label text="Incidencias"/>
+
+        <Button text="← Back" onAction="#volver" />
+        <Label text="Incidents" />
+
     </HBox>
 
+    <Label fx:id="mensajeLabel"
+        style="-fx-text-fill: red;" />
 
     <TextField fx:id="txtAsunto"
-               promptText="Asunto"/>
+        promptText="Subject" />
 
     <TextArea fx:id="txtDescripcion"
-              promptText="Describe el problema"
-              wrapText="true"
-              prefHeight="150"/>
+        promptText="Describe the issue"
+        wrapText="true"
+        prefHeight="150" />
 
+    <Button text="Send incident"
+        onAction="#enviarIncidencia"
+        prefWidth="200" />
 
-    <Button text="Enviar incidencia"
-            onAction="#enviarIncidencia"
-            prefWidth="200"/>
-
-
-    <Label text="Mis incidencias"/>
+    <Label text="My incidents" />
 
     <ListView fx:id="listaIncidencias"
-              onMouseClicked="#seleccionarIncidencia"
-              prefHeight="450"
-              prefWidth="350"/>
+        onMouseClicked="#seleccionarIncidencia"
+        prefHeight="450"
+        prefWidth="350" />
 
 </VBox>

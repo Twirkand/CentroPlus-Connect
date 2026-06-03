@@ -73,7 +73,6 @@ public class LoginController {
     @FXML
     private PasswordField registerPasswordField;
 
-
     /**
      * Recuerdame
      */
@@ -93,7 +92,6 @@ public class LoginController {
      */
     @FXML
     public void initialize() {
-
 
         String token = Session.getTokenSesionGuardado();
 
@@ -125,7 +123,10 @@ public class LoginController {
             ScreenManager.change("inicio.fxml");
 
         } catch (Exception e) {
-            errorLabel.setText(e.getMessage());
+            errorLabel.setText(LanguageManager.msg(
+                    e.getMessage(),
+                    e.getMessage(),
+                    e.getMessage()));
         }
     }
 
@@ -141,7 +142,10 @@ public class LoginController {
 
             if (registerPasswordField.getText() == null ||
                     registerPasswordField.getText().length() < 6) {
-                registerErrorLabel.setText("Contraseña demasiado corta");
+                registerErrorLabel.setText(LanguageManager.msg(
+                        "Contraseña demasiado corta",
+                        "Password too short",
+                        "Passwort zu kurz"));
                 return;
             }
 
@@ -159,7 +163,10 @@ public class LoginController {
             ScreenManager.change("login.fxml");
 
         } catch (Exception e) {
-            registerErrorLabel.setText(e.getMessage());
+            registerErrorLabel.setText(LanguageManager.msg(
+                    e.getMessage(),
+                    e.getMessage(),
+                    e.getMessage()));
         }
     }
 

@@ -6,6 +6,7 @@ import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
 import dam.mod.repositories.impl.UsuarioRepository;
 import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
+import dam.mod.utils.LanguageManager;
 import dam.mod.utils.ScreenManager;
 import dam.mod.utils.Session;
 import dam.mod.utils.Validaciones;
@@ -52,12 +53,18 @@ public class CambiarEmailController {
         String repeat = repeatEmailField.getText();
 
         if (email == null || email.isBlank() || repeat == null || repeat.isBlank()) {
-            mensajeLabel.setText("Debes rellenar ambos campos");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Debes rellenar ambos campos",
+                    "You must fill in both fields",
+                    "Beide Felder müssen ausgefüllt werden"));
             return;
         }
 
         if (!email.equals(repeat)) {
-            mensajeLabel.setText("Los emails no coinciden");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Los emails no coinciden",
+                    "Emails do not match",
+                    "E-Mails stimmen nicht überein"));
             return;
         }
 
@@ -71,7 +78,10 @@ public class CambiarEmailController {
             ScreenManager.change("perfil.fxml");
 
         } catch (IllegalArgumentException e) {
-            mensajeLabel.setText(e.getMessage());
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Email inválido",
+                    "Invalid email",
+                    "Ungültige E-Mail"));
         }
     }
 

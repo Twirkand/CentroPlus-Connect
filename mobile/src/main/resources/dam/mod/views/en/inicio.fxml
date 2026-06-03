@@ -13,14 +13,17 @@
     <top>
         <BorderPane>
 
-
             <left>
                 <VBox spacing="5" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+
                     <Label text="SportCenter" />
-                    <Label text="Menú principal" />
+                    <Label text="Main menu" />
+
+                    <Label fx:id="mensajeLabel"
+                        style="-fx-text-fill: red;" />
+
                 </VBox>
             </left>
-
 
             <right>
                 <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
@@ -87,13 +90,13 @@
     <center>
         <VBox spacing="20" alignment="CENTER">
 
-            <Button text="Actividades"
+            <Button text="Activities"
                 onAction="#abrirActividades" />
 
-            <Button text="Mis Reservas"
+            <Button text="My reservations"
                 onAction="#abrirReservas" />
 
-            <Button text="Incidencias"
+            <Button text="Incidents"
                 onAction="#abrirIncidencias" />
 
         </VBox>

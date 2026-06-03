@@ -8,6 +8,7 @@ import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
 import dam.mod.utils.ScreenManager;
 import dam.mod.utils.Session;
+import dam.mod.utils.LanguageManager;
 import dam.mod.utils.PasswordUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -77,17 +78,26 @@ public class CambiarPasswordController {
         String repeat = repeatPasswordField.getText();
 
         if (!PasswordUtils.checkPassword(oldPass, user.getPassword())) {
-            mensajeLabel.setText("Contraseña actual incorrecta");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Contraseña actual incorrecta",
+                    "Incorrect current password",
+                    "Aktuelles Passwort falsch"));
             return;
         }
 
         if (!newPass.equals(repeat)) {
-            mensajeLabel.setText("Las contraseñas no coinciden");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Las contraseñas no coinciden",
+                    "Passwords do not match",
+                    "Passwörter stimmen nicht überein"));
             return;
         }
 
         if (newPass.length() < 6) {
-            mensajeLabel.setText("Contraseña demasiado corta");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Contraseña demasiado corta",
+                    "Password too short",
+                    "Passwort zu kurz"));
             return;
         }
 
@@ -96,11 +106,17 @@ public class CambiarPasswordController {
         boolean ok = usuarioService.update(user);
 
         if (ok) {
-            mensajeLabel.setText("Contraseña actualizada correctamente");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Contraseña actualizada correctamente",
+                    "Password updated successfully",
+                    "Passwort erfolgreich aktualisiert"));
             Session.setCurrentUser(user);
             ScreenManager.change("perfil.fxml");
         } else {
-            mensajeLabel.setText("Error al actualizar");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Error al actualizar",
+                    "Update error",
+                    "Fehler beim Aktualisieren"));
         }
     }
 

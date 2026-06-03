@@ -10,6 +10,7 @@ import dam.mod.services.IIncidenciaService;
 import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.IncidenciaServiceImpl;
 import dam.mod.services.impl.UsuarioServiceImpl;
+import dam.mod.utils.LanguageManager;
 import dam.mod.utils.ScreenManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -90,7 +91,10 @@ public class DetalleIncidenciaController {
         inc = incidenciaService.findById(id);
 
         if (inc == null) {
-            mensajeLabel.setText("Incidencia no encontrada");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Incidencia no encontrada",
+                    "Incident not found",
+                    "Störung nicht gefunden"));
             ScreenManager.change("incidencias.fxml");
             return;
         }
@@ -137,11 +141,17 @@ public class DetalleIncidenciaController {
         boolean ok = incidenciaService.cambiarEstado(inc.getId(), "CERRADA");
 
         if (ok) {
-            mensajeLabel.setText("Incidencia cerrada");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Incidencia cerrada",
+                    "Incident closed",
+                    "Störung geschlossen"));
             inc = incidenciaService.findById(inc.getId());
             cargarIncidencia();
         } else {
-            mensajeLabel.setText("Error al cerrar incidencia");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Error al cerrar incidencia",
+                    "Error closing incident",
+                    "Fehler beim Schließen der Störung"));
         }
     }
 

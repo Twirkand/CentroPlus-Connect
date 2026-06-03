@@ -6,6 +6,7 @@ import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
 import dam.mod.repositories.impl.UsuarioRepository;
 import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
+import dam.mod.utils.LanguageManager;
 import dam.mod.utils.ScreenManager;
 import dam.mod.utils.Session;
 import dam.mod.utils.Validaciones;
@@ -51,12 +52,18 @@ public class CambiarTelefonoController {
         String repeat = repeatTelefonoField.getText();
 
         if (tel == null || tel.isBlank()) {
-            mensajeLabel.setText("Teléfono vacío");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Teléfono vacío",
+                    "Empty phone number",
+                    "Leere Telefonnummer"));
             return;
         }
 
         if (!tel.equals(repeat)) {
-            mensajeLabel.setText("Los teléfonos no coinciden");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Los teléfonos no coinciden",
+                    "Phone numbers do not match",
+                    "Telefonnummern stimmen nicht überein"));
             return;
         }
 
