@@ -1,6 +1,7 @@
 package dam.mod.controllers;
 
 import dam.mod.models.Actividad;
+import dam.mod.models.Usuario;
 import dam.mod.services.IActividadService;
 import dam.mod.utils.ScreenManager;
 import dam.mod.utils.Session;
@@ -22,17 +23,6 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-/**
- * Tests unitarios para ActividadesController.
- *
- * Escenarios cubiertos:
- * - Sin sesión activa → redirige al login.
- * - Con sesión activa → carga la lista de actividades.
- * - Lista vacía → limpia sin añadir elementos.
- * - Sin actividad seleccionada → no navega al detalle.
- * - Con actividad seleccionada → navega a detalle_actividad.fxml.
- * - volver() → navega a inicio.fxml.
- */
 @ExtendWith(MockitoExtension.class)
 class ActividadesControllerTest {
 
@@ -57,23 +47,16 @@ class ActividadesControllerTest {
                 controller = new ActividadesController();
 
                 Field listaField = ActividadesController.class
-                                .getDeclaredField(
-                                                "listaActividades");
-
+                                .getDeclaredField("listaActividades");
                 listaField.setAccessible(true);
-
                 listaField.set(controller, listaActividades);
 
                 Field serviceField = ActividadesController.class
-                                .getDeclaredField(
-                                                "actividadService");
-
+                                .getDeclaredField("actividadService");
                 serviceField.setAccessible(true);
-
                 serviceField.set(controller, actividadService);
 
-                when(listaActividades.getItems())
-                                .thenReturn(items);
+                when(listaActividades.getItems()).thenReturn(items);
         }
 
         @Test
@@ -92,19 +75,32 @@ class ActividadesControllerTest {
         }
 
         @Test
+        void initialize_conSesion_noRedirige() {
+
+                try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
+
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(new Usuario());
+
+                        invoke("initialize");
+
+                        screenMock.verifyNoInteractions();
+                }
+        }
+
+        @Test
         void cargarActividades_conDatos_limpiaYAñade() {
 
                 List<Actividad> actividades = Arrays.asList(
                                 new Actividad(),
                                 new Actividad());
 
-                when(actividadService.findAll())
-                                .thenReturn(actividades);
+                when(actividadService.findAll()).thenReturn(actividades);
 
                 invoke("cargarActividades");
 
                 verify(items).clear();
-
                 verify(items).addAll(actividades);
         }
 
@@ -117,7 +113,6 @@ class ActividadesControllerTest {
                 invoke("cargarActividades");
 
                 verify(items).clear();
-
                 verify(items).addAll(Collections.emptyList());
         }
 
@@ -126,14 +121,10 @@ class ActividadesControllerTest {
 
                 try (MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
 
-                        @SuppressWarnings("unchecked")
                         MultipleSelectionModel<Actividad> model = mock(MultipleSelectionModel.class);
 
-                        when(listaActividades.getSelectionModel())
-                                        .thenReturn(model);
-
-                        when(model.getSelectedItem())
-                                        .thenReturn(null);
+                        when(listaActividades.getSelectionModel()).thenReturn(model);
+                        when(model.getSelectedItem()).thenReturn(null);
 
                         invoke("seleccionarActividad");
 
@@ -148,24 +139,19 @@ class ActividadesControllerTest {
                                 MockedStatic<DetalleActividadController> detalleMock = mockStatic(
                                                 DetalleActividadController.class)) {
 
-                        @SuppressWarnings("unchecked")
                         MultipleSelectionModel<Actividad> model = mock(MultipleSelectionModel.class);
 
-                        when(listaActividades.getSelectionModel())
-                                        .thenReturn(model);
+                        when(listaActividades.getSelectionModel()).thenReturn(model);
 
                         Actividad actividad = new Actividad();
 
-                        when(model.getSelectedItem())
-                                        .thenReturn(actividad);
+                        when(model.getSelectedItem()).thenReturn(actividad);
 
                         invoke("seleccionarActividad");
 
-                        detalleMock.verify(() -> DetalleActividadController
-                                        .setActividad(actividad));
+                        detalleMock.verify(() -> DetalleActividadController.setActividad(actividad));
 
-                        screenMock.verify(() -> ScreenManager.change(
-                                        "detalle_actividad.fxml"));
+                        screenMock.verify(() -> ScreenManager.change("detalle_actividad.fxml"));
                 }
         }
 
@@ -183,12 +169,10 @@ class ActividadesControllerTest {
         private void invoke(String methodName) {
 
                 try {
-
                         Method m = ActividadesController.class
                                         .getDeclaredMethod(methodName);
 
                         m.setAccessible(true);
-
                         m.invoke(controller);
 
                 } catch (Exception e) {
