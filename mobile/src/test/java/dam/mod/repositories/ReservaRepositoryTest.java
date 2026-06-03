@@ -37,7 +37,7 @@ public class ReservaRepositoryTest {
     final int       idUsuario       = 2;
     final int       idActividad     = 3;
     final LocalDate fecha           = LocalDate.of(2025, 6, 10);
-    final String    estado          = "activa";
+    final String    estado          = "ACTIVA";
     final String    nombreActividad = "Yoga matutino";
 
     @BeforeEach

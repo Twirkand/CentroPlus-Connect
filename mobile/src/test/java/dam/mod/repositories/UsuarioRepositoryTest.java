@@ -41,7 +41,7 @@ public class UsuarioRepositoryTest {
     final String dni = "12345678A";
     final String email = "ana@example.com";
     final String telefono = "600123456";
-    final String tipoUsuario = "admin";
+    final String tipoUsuario = "AMBOS";
     final String password = "secreto123";
     final String hashBD = "$2a$12$hashFicticioParaTests";
 

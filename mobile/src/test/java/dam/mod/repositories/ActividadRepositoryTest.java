@@ -34,7 +34,7 @@ public class ActividadRepositoryTest {
 
     final int    id           = 1;
     final String nombre       = "Yoga";
-    final String tipo         = "Deporte";
+    final String tipo         = "DEPORTIVA";
     final int    duracion     = 60;
     final double precio       = 15.0;
     final int    plazasMax    = 20;

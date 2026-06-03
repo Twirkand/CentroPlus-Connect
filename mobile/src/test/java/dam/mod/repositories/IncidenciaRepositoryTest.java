@@ -38,7 +38,7 @@ public class IncidenciaRepositoryTest {
     final String    asunto      = "Problema acceso";
     final String    descripcion = "No puedo entrar";
     final LocalDate fecha       = LocalDate.of(2025, 1, 15);
-    final String    estado      = "activo";
+    final String    estado      = "ABIERTA";
 
     @BeforeEach
     void setup() {

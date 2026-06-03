@@ -15,7 +15,7 @@ public class ReservaTest {
     int idUsuario = 2;
     int idActividad = 3;
     LocalDate fecha = LocalDate.now();
-    String estado = "activa";
+    String estado = "ACTIVA";
     String nombreActividad = "Yoga matutino";
 
     @BeforeEach

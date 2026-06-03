@@ -110,7 +110,7 @@ public class ActividadServiceTest {
     @Order(9)
     @Test
     void createDuracionCeroTest() {
-        Actividad invalida = new Actividad(0, "Yoga", "Deportiva", 0, 15.0, 10, 0);
+        Actividad invalida = new Actividad(0, "Yoga", "DEPORTIVA", 0, 15.0, 10, 0);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> actividadservice.create(invalida));
     }
@@ -119,7 +119,7 @@ public class ActividadServiceTest {
     @Order(10)
     @Test
     void createPrecioNegativoTest() {
-        Actividad invalida = new Actividad(0, "Yoga", "Deportiva", 60, -1.0, 10, 0);
+        Actividad invalida = new Actividad(0, "Yoga", "DEPORTIVA", 60, -1.0, 10, 0);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> actividadservice.create(invalida));
     }
@@ -128,7 +128,7 @@ public class ActividadServiceTest {
     @Order(11)
     @Test
     void createPlazasMaximasCeroTest() {
-        Actividad invalida = new Actividad(0, "Yoga", "Deportiva", 60, 15.0, 0, 0);
+        Actividad invalida = new Actividad(0, "Yoga", "DEPORTIVA", 60, 15.0, 0, 0);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> actividadservice.create(invalida));
     }
@@ -137,7 +137,7 @@ public class ActividadServiceTest {
     @Order(12)
     @Test
     void createPlazasOcupadasSuperanMaximasTest() {
-        Actividad invalida = new Actividad(0, "Yoga", "Deportiva", 60, 15.0, 5, 10);
+        Actividad invalida = new Actividad(0, "Yoga", "DEPORTIVA", 60, 15.0, 5, 10);
         Assertions.assertThrows(IllegalArgumentException.class,
                 () -> actividadservice.create(invalida));
     }
@@ -186,7 +186,7 @@ public class ActividadServiceTest {
     @Order(18)
     @Test
     void reservarPlazaLlenaTest() {
-        Actividad llena = new Actividad(1, "Yoga", "Deportiva", 60, 15.0, 5, 5);
+        Actividad llena = new Actividad(1, "Yoga", "DEPORTIVA", 60, 15.0, 5, 5);
         when(actividadRepositoryMock.findById(1)).thenReturn(llena);
         Assertions.assertFalse(actividadservice.reservarPlaza(1));
     }
@@ -195,7 +195,7 @@ public class ActividadServiceTest {
     @Order(19)
     @Test
     void reservarPlazaOkTest() {
-        Actividad actividad = new Actividad(1, "Yoga", "Deportiva", 60, 15.0, 10, 3);
+        Actividad actividad = new Actividad(1, "Yoga", "DEPORTIVA", 60, 15.0, 10, 3);
         when(actividadRepositoryMock.findById(1)).thenReturn(actividad);
         when(actividadRepositoryMock.update(any())).thenReturn(true);
 
@@ -218,7 +218,7 @@ public class ActividadServiceTest {
     @Order(21)
     @Test
     void cancelarPlazaSinOcupadasTest() {
-        Actividad vacia = new Actividad(1, "Yoga", "Deportiva", 60, 15.0, 10, 0);
+        Actividad vacia = new Actividad(1, "Yoga", "DEPORTIVA", 60, 15.0, 10, 0);
         when(actividadRepositoryMock.findById(1)).thenReturn(vacia);
         Assertions.assertFalse(actividadservice.cancelarPlaza(1));
     }
@@ -227,7 +227,7 @@ public class ActividadServiceTest {
     @Order(22)
     @Test
     void cancelarPlazaOkTest() {
-        Actividad actividad = new Actividad(1, "Yoga", "Deportiva", 60, 15.0, 10, 3);
+        Actividad actividad = new Actividad(1, "Yoga", "DEPORTIVA", 60, 15.0, 10, 3);
         when(actividadRepositoryMock.findById(1)).thenReturn(actividad);
         when(actividadRepositoryMock.update(any())).thenReturn(true);
 
@@ -242,8 +242,8 @@ public class ActividadServiceTest {
     @Order(23)
     @Test
     void findCompletasTest() {
-        Actividad llena    = new Actividad(1, "Yoga",   "Deportiva", 60, 15.0, 5, 5);
-        Actividad conHueco = new Actividad(2, "Pilates","Deportiva", 45, 10.0, 5, 3);
+        Actividad llena    = new Actividad(1, "Yoga",   "DEPORTIVA", 60, 15.0, 5, 5);
+        Actividad conHueco = new Actividad(2, "Pilates","DEPORTIVA", 45, 10.0, 5, 3);
         when(actividadRepositoryMock.findAll()).thenReturn(Arrays.asList(llena, conHueco));
 
         List<Actividad> resultado = actividadservice.findCompletas();
@@ -280,8 +280,8 @@ public class ActividadServiceTest {
     @Order(27)
     @Test
     void calcularIngresosTotalesTest() {
-        Actividad a1 = new Actividad(1, "Yoga",    "Deportiva", 60, 10.0, 10, 3);
-        Actividad a2 = new Actividad(2, "Pilates", "Deportiva", 45, 20.0, 10, 2);
+        Actividad a1 = new Actividad(1, "Yoga",    "DEPORTIVA", 60, 10.0, 10, 3);
+        Actividad a2 = new Actividad(2, "Pilates", "DEPORTIVA", 45, 20.0, 10, 2);
         when(actividadRepositoryMock.findAll()).thenReturn(Arrays.asList(a1, a2));
 
         Assertions.assertEquals(70.0, actividadservice.calcularIngresosTotales(), 0.001);

@@ -14,7 +14,7 @@ public class UsuarioTest {
     String dni = "12345678A";
     String email = "ana@example.com";
     String telefono = "600123456";
-    String tipoUsuario = "admin";
+    String tipoUsuario = "AMBOS";
     String password = "secreto123";
 
     @BeforeEach

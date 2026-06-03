@@ -16,7 +16,7 @@ public class IncidenciaTest {
     String asunto = "asunto";
     String descripcion = "descripcion";
     LocalDate fecha = LocalDate.now();
-    String estado = "activo";
+    String estado = "ABIERTA";
 
     @BeforeEach
     void setup() {
