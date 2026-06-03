@@ -14,7 +14,7 @@ import dam.mod.services.impl.IncidenciaServiceImpl;
 
 import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
-
+import dam.mod.utils.LanguageManager;
 import dam.mod.utils.ScreenManager;
 
 import javafx.fxml.FXML;
@@ -103,7 +103,10 @@ public class IncidenciasController {
         String descripcion = txtDescripcion.getText();
 
         if (asunto.isBlank() || descripcion.isBlank()) {
-            mensajeLabel.setText("Campos vacíos");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Campos vacíos",
+                    "Empty fields",
+                    "Leere Felder"));
             return;
         }
 
@@ -118,10 +121,16 @@ public class IncidenciasController {
         boolean ok = incidenciaService.create(incidencia);
 
         if (ok) {
-            mensajeLabel.setText("Incidencia enviada");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Incidencia enviada",
+                    "Incident sent",
+                    "Störung gesendet"));
             cargarIncidencias();
         } else {
-            mensajeLabel.setText("Error al enviar incidencia");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Error al enviar incidencia",
+                    "Error sending incident",
+                    "Fehler beim Senden der Störung"));
         }
 
         txtAsunto.clear();

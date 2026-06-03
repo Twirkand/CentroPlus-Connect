@@ -31,4 +31,12 @@ public class LanguageManager {
     public static void reset() {
         language = "es";
     }
+
+    public static String msg(String es, String en, String de) {
+        return switch (language) {
+            case "en" -> en;
+            case "de" -> de;
+            default -> es;
+        };
+    }
 }

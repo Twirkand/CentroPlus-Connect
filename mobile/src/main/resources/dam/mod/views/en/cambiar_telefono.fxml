@@ -4,29 +4,26 @@
 <?import javafx.scene.control.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-    fx:controller="dam.mod.controllers.DetalleActividadController"
+    fx:controller="dam.mod.controllers.CambiarTelefonoController"
     spacing="15"
-    alignment="CENTER"
     prefWidth="390"
     prefHeight="844"
     style="-fx-padding: 15;">
 
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Button text="← Back" onAction="#volver" />
-        <Label text="Activity details" />
+        <Label text="Change phone"
+            style="-fx-font-size: 18px; -fx-font-weight: bold;" />
     </HBox>
 
     <Label fx:id="mensajeLabel"
         style="-fx-text-fill: red;" />
 
-    <Label fx:id="lblNombre" />
-    <Label fx:id="lblTipo" />
-    <Label fx:id="lblDuracion" />
-    <Label fx:id="lblPrecio" />
-    <Label fx:id="lblPlazas" />
+    <TextField fx:id="telefonoField" promptText="New phone number" />
+    <TextField fx:id="repeatTelefonoField" promptText="Repeat phone number" />
 
-    <Button text="Reserve spot"
-        onAction="#reservar"
-        prefWidth="200" />
+    <Button text="Update phone"
+        onAction="#cambiarTelefono"
+        prefWidth="250" />
 
 </VBox>

@@ -19,7 +19,7 @@ import dam.mod.services.impl.UsuarioServiceImpl;
 
 import dam.mod.services.IActividadService;
 import dam.mod.services.impl.ActividadServiceImpl;
-
+import dam.mod.utils.LanguageManager;
 import dam.mod.utils.ScreenManager;
 
 import javafx.fxml.FXML;
@@ -106,7 +106,10 @@ public class ReservasController {
         int idUsuario = Session.getCurrentUser().getId();
 
         if (seleccionada.getIdUsuario() != idUsuario) {
-            mensajeLabel.setText("No tienes permisos para cancelar esta reserva");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "No tienes permisos para cancelar esta reserva",
+                    "You are not allowed to cancel this reservation",
+                    "Keine Berechtigung zum Stornieren dieser Reservierung"));
             return;
         }
 
@@ -115,10 +118,16 @@ public class ReservasController {
                 "CANCELADA");
 
         if (ok) {
-            mensajeLabel.setText("Reserva cancelada");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Reserva cancelada",
+                    "Reservation cancelled",
+                    "Reservierung storniert"));
             cargarReservas();
         } else {
-            mensajeLabel.setText("No se pudo cancelar");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "No se pudo cancelar",
+                    "Could not cancel",
+                    "Stornierung nicht möglich"));
         }
     }
 

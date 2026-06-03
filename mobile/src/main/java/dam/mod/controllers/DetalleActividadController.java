@@ -18,6 +18,7 @@ import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.ActividadServiceImpl;
 import dam.mod.services.impl.ReservaServiceImpl;
 import dam.mod.services.impl.UsuarioServiceImpl;
+import dam.mod.utils.LanguageManager;
 import dam.mod.utils.ScreenManager;
 import dam.mod.utils.Session;
 import javafx.fxml.FXML;
@@ -115,14 +116,30 @@ public class DetalleActividadController {
      */
     private void cargarDatos() {
 
-        lblNombre.setText("Nombre: " + actividadSeleccionada.getNombre());
-        lblTipo.setText("Tipo: " + actividadSeleccionada.getTipoActividad());
-        lblDuracion.setText("Duración: " + actividadSeleccionada.getDuracion() + " min");
-        lblPrecio.setText("Precio: " + actividadSeleccionada.getPrecio() + " €");
+        lblNombre.setText(LanguageManager.msg(
+                "Nombre: ", "Name: ", "Name: ")
+                + actividadSeleccionada.getNombre());
 
-        int disponibles = actividadSeleccionada.getPlazasMaximas() - actividadSeleccionada.getPlazasOcupadas();
+        lblTipo.setText(LanguageManager.msg(
+                "Tipo: ", "Type: ", "Typ: ")
+                + actividadSeleccionada.getTipoActividad());
 
-        lblPlazas.setText("Plazas disponibles: " + disponibles);
+        lblDuracion.setText(LanguageManager.msg(
+                "Duración: ", "Duration: ", "Dauer: ")
+                + actividadSeleccionada.getDuracion()
+                + LanguageManager.msg(" min", " min", " Min"));
+
+        lblPrecio.setText(LanguageManager.msg(
+                "Precio: ", "Price: ", "Preis: ")
+                + actividadSeleccionada.getPrecio()
+                + LanguageManager.msg(" €", " €", " €"));
+
+        int disponibles = actividadSeleccionada.getPlazasMaximas()
+                - actividadSeleccionada.getPlazasOcupadas();
+
+        lblPlazas.setText(LanguageManager.msg(
+                "Plazas disponibles: ", "Available spots: ", "Verfügbare Plätze: ")
+                + disponibles);
     }
 
     /**
@@ -151,14 +168,20 @@ public class DetalleActividadController {
         }
 
         if (yaTieneActiva) {
-            mensajeLabel.setText("Ya tienes esta actividad reservada");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Ya tienes esta actividad reservada",
+                    "You already have this activity booked",
+                    "Diese Aktivität ist bereits reserviert"));
             return;
         }
 
         int disponibles = actividadSeleccionada.getPlazasMaximas() - actividadSeleccionada.getPlazasOcupadas();
 
         if (disponibles <= 0) {
-            mensajeLabel.setText("No hay plazas disponibles");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "No hay plazas disponibles",
+                    "No available spots",
+                    "Keine freien Plätze verfügbar"));
             return;
         }
 
@@ -170,10 +193,16 @@ public class DetalleActividadController {
 
             cargarDatos();
 
-            mensajeLabel.setText("Reserva realizada correctamente");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Reserva realizada correctamente",
+                    "Booking completed successfully",
+                    "Reservierung erfolgreich durchgeführt"));
 
         } else {
-            mensajeLabel.setText("Error al realizar la reserva");
+            mensajeLabel.setText(LanguageManager.msg(
+                    "Error al realizar la reserva",
+                    "Error making booking",
+                    "Fehler bei der Reservierung"));
         }
     }
 
