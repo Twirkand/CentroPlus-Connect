@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ResourceBundle;
  
 import static org.mockito.Mockito.*;
  
@@ -28,6 +29,12 @@ class CambiarEmailControllerTest {
  
     @Mock
     private IUsuarioService usuarioService;
+ 
+    // FIX 1: bundle es un campo de instancia que se usa en TODOS los paths de
+    // cambiarEmail(). Sin inyectarlo mockeado, cualquier rama que llame a
+    // bundle.getString(...) lanza NullPointerException.
+    @Mock
+    private ResourceBundle bundle;
  
     private CambiarEmailController controller;
     private TextField emailField;
@@ -43,15 +50,28 @@ class CambiarEmailControllerTest {
     void setUp() throws Exception {
         controller = new CambiarEmailController();
  
-        emailField     = new TextField();
+        emailField       = new TextField();
         repeatEmailField = new TextField();
-        mensajeLabel   = new Label();
+        mensajeLabel     = new Label();
  
-        injectField("emailField",        emailField);
-        injectField("repeatEmailField",  repeatEmailField);
-        injectField("mensajeLabel",      mensajeLabel);
-        injectField("usuarioService",    usuarioService);
+        injectField("emailField",       emailField);
+        injectField("repeatEmailField", repeatEmailField);
+        injectField("mensajeLabel",     mensajeLabel);
+        injectField("usuarioService",   usuarioService);
+        // FIX 1: inyectar bundle mockeado en todos los tests
+        injectField("bundle",           bundle);
     }
+ 
+    // -------------------------------------------------------------------------
+    // FIX 2: Los tests de validación de campos vacíos / no coincidentes NO
+    // mockeaban Session.getCurrentUser(). El controlador llama a ese método
+    // al principio de cambiarEmail(), por lo que sin el mock estático se
+    // ejecuta la implementación real, que devuelve el valor del campo estático
+    // currentUser (null o estado sucio de otro test) y puede causar un NPE o
+    // un comportamiento no determinista.
+    // La solución es envolver estos tests en un MockedStatic<Session> igual
+    // que hacen los tests que ya funcionaban.
+    // -------------------------------------------------------------------------
  
     @Test
     @DisplayName("email vacío no llama a update")
@@ -59,7 +79,10 @@ class CambiarEmailControllerTest {
         emailField.setText("");
         repeatEmailField.setText("test@email.com");
  
-        invokeCambiarEmail();
+        try (MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+            sessionMock.when(Session::getCurrentUser).thenReturn(new Usuario());
+            invokeCambiarEmail();
+        }
  
         verify(usuarioService, never()).update(any());
     }
@@ -70,7 +93,10 @@ class CambiarEmailControllerTest {
         emailField.setText("test@email.com");
         repeatEmailField.setText("");
  
-        invokeCambiarEmail();
+        try (MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+            sessionMock.when(Session::getCurrentUser).thenReturn(new Usuario());
+            invokeCambiarEmail();
+        }
  
         verify(usuarioService, never()).update(any());
     }
@@ -81,7 +107,10 @@ class CambiarEmailControllerTest {
         emailField.setText("");
         repeatEmailField.setText("");
  
-        invokeCambiarEmail();
+        try (MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+            sessionMock.when(Session::getCurrentUser).thenReturn(new Usuario());
+            invokeCambiarEmail();
+        }
  
         verify(usuarioService, never()).update(any());
     }
@@ -92,7 +121,10 @@ class CambiarEmailControllerTest {
         emailField.setText("a@email.com");
         repeatEmailField.setText("b@email.com");
  
-        invokeCambiarEmail();
+        try (MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+            sessionMock.when(Session::getCurrentUser).thenReturn(new Usuario());
+            invokeCambiarEmail();
+        }
  
         verify(usuarioService, never()).update(any());
     }
@@ -103,13 +135,13 @@ class CambiarEmailControllerTest {
         emailField.setText("no-es-email");
         repeatEmailField.setText("no-es-email");
  
-        try (MockedStatic<Validaciones> valMock = mockStatic(Validaciones.class);
+        try (MockedStatic<Validaciones> valMock    = mockStatic(Validaciones.class);
              MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class);
-             MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+             MockedStatic<Session> sessionMock      = mockStatic(Session.class)) {
  
             sessionMock.when(Session::getCurrentUser).thenReturn(new Usuario());
             valMock.when(() -> Validaciones.validarEmail("no-es-email"))
-                    .thenThrow(new IllegalArgumentException("Email no válido"));
+                   .thenThrow(new IllegalArgumentException("Email no válido"));
  
             invokeCambiarEmail();
  
@@ -124,9 +156,9 @@ class CambiarEmailControllerTest {
         emailField.setText("nuevo@email.com");
         repeatEmailField.setText("nuevo@email.com");
  
-        try (MockedStatic<Validaciones> valMock = mockStatic(Validaciones.class);
+        try (MockedStatic<Validaciones> valMock    = mockStatic(Validaciones.class);
              MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class);
-             MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+             MockedStatic<Session> sessionMock      = mockStatic(Session.class)) {
  
             Usuario user = new Usuario();
             sessionMock.when(Session::getCurrentUser).thenReturn(user);
@@ -145,9 +177,9 @@ class CambiarEmailControllerTest {
         emailField.setText("nuevo@email.com");
         repeatEmailField.setText("nuevo@email.com");
  
-        try (MockedStatic<Validaciones> valMock = mockStatic(Validaciones.class);
+        try (MockedStatic<Validaciones> valMock    = mockStatic(Validaciones.class);
              MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class);
-             MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+             MockedStatic<Session> sessionMock      = mockStatic(Session.class)) {
  
             Usuario user = new Usuario();
             sessionMock.when(Session::getCurrentUser).thenReturn(user);
@@ -166,9 +198,9 @@ class CambiarEmailControllerTest {
         emailField.setText("nuevo@email.com");
         repeatEmailField.setText("nuevo@email.com");
  
-        try (MockedStatic<Validaciones> valMock = mockStatic(Validaciones.class);
+        try (MockedStatic<Validaciones> valMock    = mockStatic(Validaciones.class);
              MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class);
-             MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+             MockedStatic<Session> sessionMock      = mockStatic(Session.class)) {
  
             Usuario user = new Usuario();
             sessionMock.when(Session::getCurrentUser).thenReturn(user);
@@ -195,7 +227,7 @@ class CambiarEmailControllerTest {
     @Test
     @DisplayName("initialize redirige a login si no hay sesión activa")
     void initialize_sinSesion() throws Exception {
-        try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+        try (MockedStatic<Session> sessionMock      = mockStatic(Session.class);
              MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
  
             sessionMock.when(Session::getCurrentUser).thenReturn(null);
@@ -207,6 +239,8 @@ class CambiarEmailControllerTest {
             screenMock.verify(() -> ScreenManager.change("login.fxml"));
         }
     }
+ 
+    // -------------------------------------------------------------------------
  
     private void invokeCambiarEmail() throws Exception {
         Method m = CambiarEmailController.class.getDeclaredMethod("cambiarEmail");
