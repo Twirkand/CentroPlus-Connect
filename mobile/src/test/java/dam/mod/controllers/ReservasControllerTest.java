@@ -17,10 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,6 +79,18 @@ class ReservasControllerTest {
     }
 
     @Test
+    void cargarReservas_listaVacia_setAllConListaVacia() {
+        try (MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+            sessionMock.when(Session::getCurrentUser).thenReturn(usuarioMock(USUARIO_ID));
+            when(reservaService.findByIdUsuario(USUARIO_ID)).thenReturn(List.of());
+
+            invoke("cargarReservas");
+
+            verify(items).setAll(Collections.emptyList());
+        }
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     void cancelarReserva_sinSeleccion_noLlamaServicio() {
         MultipleSelectionModel<Reserva> model = mock(MultipleSelectionModel.class);
@@ -124,10 +138,28 @@ class ReservasControllerTest {
             MultipleSelectionModel<Reserva> model = mock(MultipleSelectionModel.class);
             when(listaReservas.getSelectionModel()).thenReturn(model);
             when(model.getSelectedItem()).thenReturn(reserva);
-            when(reservaService.cancelarReserva(5, USUARIO_ID)).thenReturn(false);
+            when(reservaService.cambiarEstado(5, "CANCELADA")).thenReturn(false);
 
             invoke("cancelarReserva");
 
+            verify(items, never()).setAll(any(java.util.Collection.class));
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void cancelarReserva_ajena_noLlamaServicioNiRecarga() {
+        try (MockedStatic<Session> sessionMock = mockStatic(Session.class)) {
+            sessionMock.when(Session::getCurrentUser).thenReturn(usuarioMock(USUARIO_ID));
+
+            Reserva reservaAjena = reservaMock(5, USUARIO_ID + 99); // otro usuario
+            MultipleSelectionModel<Reserva> model = mock(MultipleSelectionModel.class);
+            when(listaReservas.getSelectionModel()).thenReturn(model);
+            when(model.getSelectedItem()).thenReturn(reservaAjena);
+
+            invoke("cancelarReserva");
+
+            verify(reservaService, never()).cambiarEstado(anyInt(), anyString());
             verify(items, never()).setAll(any(java.util.Collection.class));
         }
     }

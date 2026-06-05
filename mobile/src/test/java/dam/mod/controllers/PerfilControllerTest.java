@@ -62,7 +62,7 @@ class PerfilControllerTest {
     void initialize_sinSesion_redirigeLogin() {
 
         try (MockedStatic<Session> sessionMock = Mockito.mockStatic(Session.class);
-             MockedStatic<ScreenManager> screenMock = Mockito.mockStatic(ScreenManager.class)) {
+                MockedStatic<ScreenManager> screenMock = Mockito.mockStatic(ScreenManager.class)) {
 
             sessionMock.when(Session::getCurrentUser).thenReturn(null);
 
@@ -143,6 +143,22 @@ class PerfilControllerTest {
             method.invoke(perfilController);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void abrirCambiarEmail_navegaCorrectamente() {
+        try (MockedStatic<ScreenManager> screenMock = Mockito.mockStatic(ScreenManager.class)) {
+            invoke("abrirCambiarEmail");
+            screenMock.verify(() -> ScreenManager.change("cambiar_email.fxml"));
+        }
+    }
+
+    @Test
+    void abrirCambiarTelefono_navegaCorrectamente() {
+        try (MockedStatic<ScreenManager> screenMock = Mockito.mockStatic(ScreenManager.class)) {
+            invoke("abrirCambiarTelefono");
+            screenMock.verify(() -> ScreenManager.change("cambiar_telefono.fxml"));
         }
     }
 }

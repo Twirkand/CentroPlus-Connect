@@ -190,4 +190,14 @@ class IncidenciasControllerTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    void enviarIncidencia_descripcionVacia_noLlamaServicio() {
+        when(txtAsunto.getText()).thenReturn("Asunto válido");
+        when(txtDescripcion.getText()).thenReturn("   ");
+
+        invoke("enviarIncidencia");
+
+        verify(incidenciaService, never()).create(any());
+    }
 }
