@@ -48,6 +48,8 @@ class LoginControllerTest {
     void setUp() throws Exception {
         controller          = new LoginController();
         usuarioServiceMock  = mock(IUsuarioService.class);
+
+        injectField("bundle", LanguageManager.getBundle());
  
         dniInputMock                = mock(TextField.class);
         passwordInputMock           = mock(PasswordField.class);
@@ -162,7 +164,7 @@ class LoginControllerTest {
  
         invokePrivate("handleRegister");
  
-        verify(registerErrorLabelMock).setText("DNI duplicado");
+        verify(registerErrorLabelMock).setText("Error al registrar usuario");
     }
  
     @Test
