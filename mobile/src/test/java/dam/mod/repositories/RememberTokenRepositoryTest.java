@@ -1,170 +1,336 @@
 package dam.mod.repositories;
  
 import dam.mod.models.RememberToken;
+import dam.mod.repositories.impl.RememberTokenRepositoryImpl;
+import dam.mod.repositories.sqlite.ConnectionManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
  
-import java.util.Arrays;
-import java.util.Collections;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
  
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
  
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Tests de RememberTokenRepositoryImpl")
 class RememberTokenRepositoryTest {
+
+    @Mock Connection connection;
+    @Mock PreparedStatement preparedStatement;
+    @Mock ResultSet resultSet;
  
-    @Mock
-    private IRememberTokenRepository repository;
+    RememberTokenRepositoryImpl repository;
  
-    private RememberToken tokenValido;
+    final int    id        = 1;
+    final int    userId    = 42;
+    final String tokenHash = "hash_abc123";
+    final String expiresAt = "2099-12-31 00:00:00";
  
     @BeforeEach
     void setUp() {
-        tokenValido = new RememberToken(1, 42, "hash_abc123", "2099-12-31 00:00:00");
+        repository = new RememberTokenRepositoryImpl();
+    }
+ 
+    private void configurarResultSetConUnToken() throws SQLException {
+        when(resultSet.next()).thenReturn(true, false);
+        when(resultSet.getInt("id")).thenReturn(id);
+        when(resultSet.getInt("user_id")).thenReturn(userId);
+        when(resultSet.getString("token_hash")).thenReturn(tokenHash);
+        when(resultSet.getString("expires_at")).thenReturn(expiresAt);
     }
  
     @Test
-    @DisplayName("saveToken devuelve true cuando el insert tiene éxito")
-    void saveToken_exito() {
-        when(repository.saveToken(42, "hash_abc123", "2099-12-31 00:00:00"))
-                .thenReturn(true);
+    @Order(1)
+    @DisplayName("saveToken: devuelve true cuando el INSERT tiene éxito")
+    void saveToken_exito() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
  
-        boolean result = repository.saveToken(42, "hash_abc123", "2099-12-31 00:00:00");
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertTrue(result);
-        verify(repository).saveToken(42, "hash_abc123", "2099-12-31 00:00:00");
+            assertTrue(repository.saveToken(userId, tokenHash, expiresAt));
+        }
     }
  
     @Test
-    @DisplayName("saveToken devuelve false cuando el insert falla")
-    void saveToken_fallo() {
-        when(repository.saveToken(anyInt(), anyString(), anyString()))
-                .thenReturn(false);
+    @Order(2)
+    @DisplayName("saveToken: devuelve false cuando el INSERT no afecta ninguna fila")
+    void saveToken_fallo() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(0);
  
-        boolean result = repository.saveToken(99, "hash_xyz", "2099-01-01 00:00:00");
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertFalse(result);
+            assertFalse(repository.saveToken(userId, tokenHash, expiresAt));
+        }
     }
  
     @Test
-    @DisplayName("saveToken lanza RuntimeException ante error de BD")
-    void saveToken_excepcion() {
-        when(repository.saveToken(anyInt(), anyString(), anyString()))
-                .thenThrow(new RuntimeException("Error guardando token"));
+    @Order(3)
+    @DisplayName("saveToken: lanza RuntimeException ante error de BD")
+    void saveToken_excepcion() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException("Error BD"));
  
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> repository.saveToken(1, "hash", "2099-01-01 00:00:00"));
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertEquals("Error guardando token", ex.getMessage());
+            RuntimeException ex = assertThrows(RuntimeException.class,
+                    () -> repository.saveToken(userId, tokenHash, expiresAt));
+            assertTrue(ex.getMessage().contains("Error guardando token"));
+        }
     }
  
     @Test
-    @DisplayName("findByHash devuelve el token cuando existe y no ha expirado")
-    void findByHash_encontrado() {
-        when(repository.findByHash("hash_abc123")).thenReturn(tokenValido);
+    @Order(4)
+    @DisplayName("saveToken: verifica que se setean los tres parámetros correctamente")
+    void saveToken_verificaParametros() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
  
-        RememberToken result = repository.findByHash("hash_abc123");
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertNotNull(result);
-        assertEquals(42, result.getUserId());
-        assertEquals("hash_abc123", result.getTokenHash());
+            repository.saveToken(userId, tokenHash, expiresAt);
+ 
+            verify(preparedStatement).setInt(1, userId);
+            verify(preparedStatement).setString(2, tokenHash);
+            verify(preparedStatement).setString(3, expiresAt);
+        }
     }
  
     @Test
-    @DisplayName("findByHash devuelve null cuando el hash no existe")
-    void findByHash_noEncontrado() {
-        when(repository.findByHash("hash_inexistente")).thenReturn(null);
+    @Order(5)
+    @DisplayName("findByHash: devuelve el token cuando existe y no ha expirado")
+    void findByHash_encontrado() throws SQLException {
+        configurarResultSetConUnToken();
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
  
-        RememberToken result = repository.findByHash("hash_inexistente");
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertNull(result);
+            RememberToken result = repository.findByHash(tokenHash);
+ 
+            assertAll(
+                    () -> assertNotNull(result),
+                    () -> assertEquals(id,        result.getId()),
+                    () -> assertEquals(userId,    result.getUserId()),
+                    () -> assertEquals(tokenHash, result.getTokenHash()),
+                    () -> assertEquals(expiresAt, result.getExpiresAt())
+            );
+        }
     }
  
     @Test
-    @DisplayName("findByHash devuelve null cuando el token ha expirado")
-    void findByHash_tokenExpirado() {
-        when(repository.findByHash("hash_expirado")).thenReturn(null);
+    @Order(6)
+    @DisplayName("findByHash: devuelve null cuando el hash no existe")
+    void findByHash_noEncontrado() throws SQLException {
+        when(resultSet.next()).thenReturn(false);
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
  
-        RememberToken result = repository.findByHash("hash_expirado");
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertNull(result);
+            assertNull(repository.findByHash("hash_inexistente"),
+                    "Hash no existente debe devolver null");
+        }
     }
  
     @Test
-    @DisplayName("findByHash lanza RuntimeException ante error de BD")
-    void findByHash_excepcion() {
-        when(repository.findByHash(anyString()))
-                .thenThrow(new RuntimeException("Error buscando token"));
+    @Order(7)
+    @DisplayName("findByHash: devuelve null cuando el token ha expirado (SQL filtra por expires_at)")
+    void findByHash_tokenExpirado() throws SQLException {
+        when(resultSet.next()).thenReturn(false);
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
  
-        assertThrows(RuntimeException.class, () -> repository.findByHash("cualquier_hash"));
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
+ 
+            assertNull(repository.findByHash("hash_expirado"),
+                    "Token expirado filtrado por la BD debe devolver null");
+        }
     }
  
     @Test
-    @DisplayName("findAllValid devuelve lista con tokens vigentes")
-    void findAllValid_conTokens() {
-        RememberToken token2 = new RememberToken(2, 10, "hash_def456", "2099-06-01 00:00:00");
-        when(repository.findAllValid()).thenReturn(Arrays.asList(tokenValido, token2));
+    @Order(8)
+    @DisplayName("findByHash: lanza RuntimeException ante error de BD")
+    void findByHash_excepcion() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException("Error BD"));
  
-        List<RememberToken> result = repository.findAllValid();
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertEquals(2, result.size());
-        assertEquals("hash_abc123", result.get(0).getTokenHash());
-        assertEquals("hash_def456", result.get(1).getTokenHash());
+            RuntimeException ex = assertThrows(RuntimeException.class,
+                    () -> repository.findByHash(tokenHash));
+            assertTrue(ex.getMessage().contains("Error buscando token"));
+        }
     }
  
     @Test
-    @DisplayName("findAllValid devuelve lista vacía cuando no hay tokens vigentes")
-    void findAllValid_listaVacia() {
-        when(repository.findAllValid()).thenReturn(Collections.emptyList());
+    @Order(9)
+    @DisplayName("findByHash: verifica que se setea el hash como parámetro")
+    void findByHash_verificaParametro() throws SQLException {
+        when(resultSet.next()).thenReturn(false);
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
  
-        List<RememberToken> result = repository.findAllValid();
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+            repository.findByHash(tokenHash);
+ 
+            verify(preparedStatement).setString(1, tokenHash);
+        }
     }
  
     @Test
-    @DisplayName("findAllValid lanza RuntimeException ante error de BD")
-    void findAllValid_excepcion() {
-        when(repository.findAllValid())
-                .thenThrow(new RuntimeException("Error leyendo tokens"));
+    @Order(10)
+    @DisplayName("findAllValid: devuelve lista con tokens vigentes")
+    void findAllValid_conTokens() throws SQLException {
+        configurarResultSetConUnToken();
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
  
-        assertThrows(RuntimeException.class, () -> repository.findAllValid());
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
+ 
+            List<RememberToken> result = repository.findAllValid();
+ 
+            assertAll(
+                    () -> assertNotNull(result),
+                    () -> assertEquals(1,         result.size()),
+                    () -> assertEquals(tokenHash, result.get(0).getTokenHash()),
+                    () -> assertEquals(userId,    result.get(0).getUserId())
+            );
+        }
     }
  
     @Test
-    @DisplayName("deleteByUserId devuelve true cuando borra al menos un token")
-    void deleteByUserId_exito() {
-        when(repository.deleteByUserId(42)).thenReturn(true);
+    @Order(11)
+    @DisplayName("findAllValid: devuelve lista vacía cuando no hay tokens vigentes")
+    void findAllValid_listaVacia() throws SQLException {
+        when(resultSet.next()).thenReturn(false);
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
  
-        boolean result = repository.deleteByUserId(42);
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertTrue(result);
-        verify(repository).deleteByUserId(42);
+            List<RememberToken> result = repository.findAllValid();
+ 
+            assertNotNull(result);
+            assertTrue(result.isEmpty());
+        }
     }
  
     @Test
-    @DisplayName("deleteByUserId devuelve false cuando el usuario no tiene tokens")
-    void deleteByUserId_sinTokens() {
-        when(repository.deleteByUserId(999)).thenReturn(false);
+    @Order(12)
+    @DisplayName("findAllValid: lanza RuntimeException ante error de BD")
+    void findAllValid_excepcion() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException("Error BD"));
  
-        boolean result = repository.deleteByUserId(999);
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
  
-        assertFalse(result);
+            RuntimeException ex = assertThrows(RuntimeException.class,
+                    () -> repository.findAllValid());
+            assertTrue(ex.getMessage().contains("Error leyendo tokens"));
+        }
     }
  
     @Test
-    @DisplayName("deleteByUserId lanza RuntimeException ante error de BD")
-    void deleteByUserId_excepcion() {
-        when(repository.deleteByUserId(anyInt()))
-                .thenThrow(new RuntimeException("Error borrando tokens"));
+    @Order(13)
+    @DisplayName("findAllValid: mapea correctamente todos los campos del token")
+    void findAllValid_mapeaCamposCorrectamente() throws SQLException {
+        configurarResultSetConUnToken();
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
  
-        assertThrows(RuntimeException.class, () -> repository.deleteByUserId(1));
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
+ 
+            RememberToken token = repository.findAllValid().get(0);
+ 
+            assertAll(
+                    () -> assertEquals(id,        token.getId()),
+                    () -> assertEquals(userId,    token.getUserId()),
+                    () -> assertEquals(tokenHash, token.getTokenHash()),
+                    () -> assertEquals(expiresAt, token.getExpiresAt())
+            );
+        }
+    }
+ 
+    @Test
+    @Order(14)
+    @DisplayName("deleteByUserId: devuelve true cuando borra al menos un token")
+    void deleteByUserId_exito() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
+ 
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
+ 
+            assertTrue(repository.deleteByUserId(userId));
+        }
+    }
+ 
+    @Test
+    @Order(15)
+    @DisplayName("deleteByUserId: devuelve false cuando el usuario no tiene tokens")
+    void deleteByUserId_sinTokens() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(0);
+ 
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
+ 
+            assertFalse(repository.deleteByUserId(999));
+        }
+    }
+ 
+    @Test
+    @Order(16)
+    @DisplayName("deleteByUserId: lanza RuntimeException ante error de BD")
+    void deleteByUserId_excepcion() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenThrow(new SQLException("Error BD"));
+ 
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
+ 
+            RuntimeException ex = assertThrows(RuntimeException.class,
+                    () -> repository.deleteByUserId(userId));
+            assertTrue(ex.getMessage().contains("Error borrando tokens"));
+        }
+    }
+ 
+    @Test
+    @Order(17)
+    @DisplayName("deleteByUserId: verifica que se setea el userId como parámetro")
+    void deleteByUserId_verificaParametro() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
+ 
+        try (MockedStatic<ConnectionManager> mock = mockStatic(ConnectionManager.class)) {
+            mock.when(ConnectionManager::getConnection).thenReturn(connection);
+ 
+            repository.deleteByUserId(userId);
+ 
+            verify(preparedStatement).setInt(1, userId);
+        }
     }
 }
