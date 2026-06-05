@@ -8,10 +8,11 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="dam.mod.controllers.LoginController"
-    alignment="CENTER"
     spacing="15"
+    alignment="TOP_CENTER"
     prefWidth="390"
-    prefHeight="844">
+    prefHeight="844"
+    style="-fx-padding: 15;">
 
     <padding>
         <Insets top="40" right="40" bottom="40" left="40" />

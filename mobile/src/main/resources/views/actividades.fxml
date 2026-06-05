@@ -6,7 +6,6 @@
 <VBox xmlns:fx="http://javafx.com/fxml"
     fx:controller="dam.mod.controllers.ActividadesController"
     spacing="15"
-    alignment="CENTER"
     prefWidth="390"
     prefHeight="844"
     style="-fx-padding: 15;">
@@ -14,7 +13,7 @@
 
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Button text="%common.back" onAction="#volver" />
-        <Label text="%activities.title" />
+        <Label text="%activities.title" styleClass="app-subtitle" />
     </HBox>
 
 

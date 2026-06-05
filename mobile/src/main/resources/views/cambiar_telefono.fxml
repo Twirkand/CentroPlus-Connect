@@ -8,7 +8,8 @@
     spacing="15"
     prefWidth="390"
     prefHeight="844"
-    style="-fx-padding: 15;">
+    style="-fx-padding: 15;"
+    alignment="TOP_CENTER">
 
     <HBox spacing="10" alignment="CENTER_LEFT">
         <Button text="%common.back" onAction="#volver" />
