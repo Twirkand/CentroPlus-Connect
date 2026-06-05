@@ -33,7 +33,7 @@
               onAction="#handleRegister"
               maxWidth="Infinity" />
 
-       <Button text="%register.back"
+       <Button text="%common.back"
               onAction="#volverLogin"
               maxWidth="Infinity" />
 

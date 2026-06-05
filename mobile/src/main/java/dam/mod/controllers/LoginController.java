@@ -6,6 +6,7 @@ import dam.mod.repositories.impl.UsuarioRepository;
 import dam.mod.services.IUsuarioService;
 import dam.mod.services.impl.UsuarioServiceImpl;
 import dam.mod.utils.LanguageManager;
+import dam.mod.utils.PasswordUtils;
 import dam.mod.utils.ScreenManager;
 import dam.mod.utils.Session;
 import javafx.fxml.FXML;
@@ -41,7 +42,6 @@ public class LoginController {
     @FXML
     public void initialize() {
 
-        // FIX: nunca depender de null externo
         bundle = LanguageManager.getBundle();
 
         if (bundle == null) {
@@ -81,41 +81,34 @@ public class LoginController {
         }
     }
 
-    @FXML
-    private void handleRegister() {
+@FXML
+private void handleRegister() {
 
-        try {
+    try {
+        String pass = registerPasswordField.getText();
 
-            String pass = registerPasswordField.getText();
-
-            if (pass == null || pass.length() < 6) {
-
-                // FIX: evitar null bundle crash
-                String msg = (bundle != null)
-                        ? bundle.getString("error.password.short")
-                        : "Contraseña demasiado corta";
-
-                registerErrorLabel.setText(msg);
-                return;
-            }
-
-            Usuario nuevo = new Usuario(
-                    0,
-                    nombreField.getText(),
-                    dniRegisterField.getText().trim().toUpperCase(),
-                    emailField.getText(),
-                    telefonoField.getText(),
-                    "ALUMNO",
-                    pass
-            );
-
-            service.create(nuevo);
-            ScreenManager.change("login.fxml");
-
-        } catch (Exception e) {
-            registerErrorLabel.setText(e.getMessage());
+        if (pass == null || pass.trim().length() < 6) {
+            registerErrorLabel.setText(bundle.getString("error.password.short"));
+            return;
         }
+
+        Usuario nuevo = new Usuario(
+                0,
+                nombreField.getText(),
+                dniRegisterField.getText().trim().toUpperCase(),
+                emailField.getText(),
+                telefonoField.getText(),
+                "ALUMNO",
+                pass
+        );
+
+        service.create(nuevo);
+        ScreenManager.change("login.fxml");
+
+    } catch (Exception e) {
+        registerErrorLabel.setText(bundle.getString("error.register"));
     }
+}
 
     @FXML
     private void abrirRegistro() {

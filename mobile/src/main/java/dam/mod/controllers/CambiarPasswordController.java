@@ -74,7 +74,7 @@ public class CambiarPasswordController {
             return;
         }
 
-        user.setPassword(newPass);
+        user.setPassword(PasswordUtils.hashPassword(newPass));
 
         boolean ok = usuarioService.update(user);
 
