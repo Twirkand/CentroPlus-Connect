@@ -87,8 +87,7 @@ public class PerfilController {
     /**
      * Cierra la sesión del usuario actual y redirige al login.
      */
-    @FXML
-    private void cerrarSesion() {
+    @FXML void cerrarSesion() {
         service.logout();
         ScreenManager.change("login.fxml");
     }

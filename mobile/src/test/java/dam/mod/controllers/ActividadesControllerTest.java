@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,6 +78,33 @@ class ActividadesControllerTest {
                         invoke("initialize");
 
                         screenMock.verify(() -> ScreenManager.change("login.fxml"));
+                }
+        }
+
+        @Test
+        void initialize_conSesion_cargaActividades() throws Exception {
+                String url = "jdbc:sqlite:file:testActividades?mode=memory&cache=shared";
+
+                try (java.sql.Connection conn = java.sql.DriverManager.getConnection(url);
+                                MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class);
+                                MockedStatic<dam.mod.repositories.sqlite.ConnectionManager> connMock = mockStatic(
+                                                dam.mod.repositories.sqlite.ConnectionManager.class)) {
+
+                        conn.createStatement().executeUpdate(
+                                        "CREATE TABLE IF NOT EXISTS actividades (" +
+                                                        "id INTEGER, nombre TEXT, tipo_actividad TEXT, " +
+                                                        "duracion INTEGER, precio REAL, plazas_maximas INTEGER, plazas_ocupadas INTEGER)");
+
+                        connMock.when(dam.mod.repositories.sqlite.ConnectionManager::getConnection)
+                                        .thenAnswer(inv -> java.sql.DriverManager.getConnection(url));
+
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(new dam.mod.models.Usuario());
+
+                        invoke("initialize");
+
+                        screenMock.verify(() -> ScreenManager.change("login.fxml"), never());
                 }
         }
 

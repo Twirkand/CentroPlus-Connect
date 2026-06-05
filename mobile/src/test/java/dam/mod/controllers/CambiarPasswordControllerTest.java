@@ -22,294 +22,279 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CambiarPasswordControllerTest {
 
-    private CambiarPasswordController controller;
+        private CambiarPasswordController controller;
 
-    private IUsuarioService usuarioService =
-            mock(IUsuarioService.class);
+        private IUsuarioService usuarioService = mock(IUsuarioService.class);
 
-    private PasswordField oldPasswordField =
-            mock(PasswordField.class);
+        private PasswordField oldPasswordField = mock(PasswordField.class);
 
-    private PasswordField newPasswordField =
-            mock(PasswordField.class);
+        private PasswordField newPasswordField = mock(PasswordField.class);
 
-    private PasswordField repeatPasswordField =
-            mock(PasswordField.class);
+        private PasswordField repeatPasswordField = mock(PasswordField.class);
 
-    @BeforeAll
-    static void initJavaFX() {
-        dam.mod.JavaFXInitializer.init();
-    }
-
-    @BeforeEach
-    void setUp() throws Exception {
-
-        controller = new CambiarPasswordController();
-
-        setField("usuarioService", usuarioService);
-
-        setField("oldPasswordField", oldPasswordField);
-        setField("newPasswordField", newPasswordField);
-        setField("repeatPasswordField",repeatPasswordField);
-        setField("mensajeLabel", mock(javafx.scene.control.Label.class));
-    }
-
-    @Test
-    void initialize_sinSesion_redirigirALogin() {
-
-        try (MockedStatic<Session> sessionMock =
-                     mockStatic(Session.class);
-             MockedStatic<ScreenManager> screenMock =
-                     mockStatic(ScreenManager.class)) {
-
-            sessionMock.when(Session::getCurrentUser)
-                    .thenReturn(null);
-
-            invoke("initialize");
-
-            screenMock.verify(() ->
-                    ScreenManager.change("login.fxml"));
+        @BeforeAll
+        static void initJavaFX() {
+                dam.mod.JavaFXInitializer.init();
         }
-    }
 
-    @Test
-    void cambiarPassword_contrasenaActualIncorrecta_noActualiza() {
+        @BeforeEach
+        void setUp() throws Exception {
 
-        try (MockedStatic<Session> sessionMock =
-                     mockStatic(Session.class);
-             MockedStatic<PasswordUtils> pwMock =
-                     mockStatic(PasswordUtils.class)) {
+                controller = new CambiarPasswordController();
 
-            Usuario user = usuarioConPassword("hash");
+                setField("usuarioService", usuarioService);
 
-            sessionMock.when(Session::getCurrentUser)
-                    .thenReturn(user);
-
-            when(oldPasswordField.getText())
-                    .thenReturn("incorrecta");
-
-            pwMock.when(() ->
-                            PasswordUtils.checkPassword(
-                                    "incorrecta",
-                                    "hash"))
-                    .thenReturn(false);
-
-            invoke("cambiarPassword");
-
-            verify(usuarioService, never())
-                    .update(any());
+                setField("oldPasswordField", oldPasswordField);
+                setField("newPasswordField", newPasswordField);
+                setField("repeatPasswordField", repeatPasswordField);
+                setField("mensajeLabel", mock(javafx.scene.control.Label.class));
         }
-    }
 
-    @Test
-    void cambiarPassword_contrasenasNuevasNoCoinciden_noActualiza() {
+        @Test
+        void initialize_sinSesion_redirigirALogin() {
 
-        try (MockedStatic<Session> sessionMock =
-                     mockStatic(Session.class);
-             MockedStatic<PasswordUtils> pwMock =
-                     mockStatic(PasswordUtils.class)) {
+                try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
 
-            Usuario user = usuarioConPassword("hash");
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(null);
 
-            sessionMock.when(Session::getCurrentUser)
-                    .thenReturn(user);
+                        invoke("initialize");
 
-            when(oldPasswordField.getText())
-                    .thenReturn("correcta");
-
-            when(newPasswordField.getText())
-                    .thenReturn("nueva123");
-
-            when(repeatPasswordField.getText())
-                    .thenReturn("diferente");
-
-            pwMock.when(() ->
-                            PasswordUtils.checkPassword(
-                                    "correcta",
-                                    "hash"))
-                    .thenReturn(true);
-
-            invoke("cambiarPassword");
-
-            verify(usuarioService, never())
-                    .update(any());
+                        screenMock.verify(() -> ScreenManager.change("login.fxml"));
+                }
         }
-    }
 
-    @Test
-    void cambiarPassword_contrasenaNuevaCorta_noActualiza() {
+        @Test
+        void initialize_conSesion_noRedirige() {
+                try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
 
-        try (MockedStatic<Session> sessionMock =
-                     mockStatic(Session.class);
-             MockedStatic<PasswordUtils> pwMock =
-                     mockStatic(PasswordUtils.class)) {
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(usuarioConPassword("hash"));
 
-            Usuario user = usuarioConPassword("hash");
+                        invoke("initialize");
 
-            sessionMock.when(Session::getCurrentUser)
-                    .thenReturn(user);
-
-            when(oldPasswordField.getText())
-                    .thenReturn("correcta");
-
-            when(newPasswordField.getText())
-                    .thenReturn("abc");
-
-            when(repeatPasswordField.getText())
-                    .thenReturn("abc");
-
-            pwMock.when(() ->
-                            PasswordUtils.checkPassword(
-                                    "correcta",
-                                    "hash"))
-                    .thenReturn(true);
-
-            invoke("cambiarPassword");
-
-            verify(usuarioService, never())
-                    .update(any());
+                        screenMock.verify(() -> ScreenManager.change("login.fxml"), never());
+                }
         }
-    }
 
-    @Test
-    void cambiarPassword_datosValidos_actualizaYRedirige() {
+        @Test
+        void cambiarPassword_contrasenaActualIncorrecta_noActualiza() {
 
-        try (MockedStatic<Session> sessionMock =
-                     mockStatic(Session.class);
-             MockedStatic<PasswordUtils> pwMock =
-                     mockStatic(PasswordUtils.class);
-             MockedStatic<ScreenManager> screenMock =
-                     mockStatic(ScreenManager.class)) {
+                try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<PasswordUtils> pwMock = mockStatic(PasswordUtils.class)) {
 
-            Usuario user = usuarioConPassword("hash");
+                        Usuario user = usuarioConPassword("hash");
 
-            sessionMock.when(Session::getCurrentUser)
-                    .thenReturn(user);
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(user);
 
-            when(oldPasswordField.getText())
-                    .thenReturn("correcta");
+                        when(oldPasswordField.getText())
+                                        .thenReturn("incorrecta");
 
-            when(newPasswordField.getText())
-                    .thenReturn("nuevaPass123");
+                        pwMock.when(() -> PasswordUtils.checkPassword(
+                                        "incorrecta",
+                                        "hash"))
+                                        .thenReturn(false);
 
-            when(repeatPasswordField.getText())
-                    .thenReturn("nuevaPass123");
+                        invoke("cambiarPassword");
 
-            pwMock.when(() ->
-                            PasswordUtils.checkPassword(
-                                    "correcta",
-                                    "hash"))
-                    .thenReturn(true);
-
-            pwMock.when(() ->
-                            PasswordUtils.hashPassword(
-                                    "nuevaPass123"))
-                    .thenReturn("nuevoHash");
-
-            when(usuarioService.update(user))
-                    .thenReturn(true);
-
-            invoke("cambiarPassword");
-
-            verify(usuarioService)
-                    .update(user);
-
-            screenMock.verify(() ->
-                    ScreenManager.change("perfil.fxml"));
+                        verify(usuarioService, never())
+                                        .update(any());
+                }
         }
-    }
 
-    @Test
-    void cambiarPassword_errorEnServicio_noRedirige() {
+        @Test
+        void cambiarPassword_contrasenasNuevasNoCoinciden_noActualiza() {
 
-        try (MockedStatic<Session> sessionMock =
-                     mockStatic(Session.class);
-             MockedStatic<PasswordUtils> pwMock =
-                     mockStatic(PasswordUtils.class);
-             MockedStatic<ScreenManager> screenMock =
-                     mockStatic(ScreenManager.class)) {
+                try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<PasswordUtils> pwMock = mockStatic(PasswordUtils.class)) {
 
-            Usuario user = usuarioConPassword("hash");
+                        Usuario user = usuarioConPassword("hash");
 
-            sessionMock.when(Session::getCurrentUser)
-                    .thenReturn(user);
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(user);
 
-            when(oldPasswordField.getText())
-                    .thenReturn("correcta");
+                        when(oldPasswordField.getText())
+                                        .thenReturn("correcta");
 
-            when(newPasswordField.getText())
-                    .thenReturn("nuevaPass123");
+                        when(newPasswordField.getText())
+                                        .thenReturn("nueva123");
 
-            when(repeatPasswordField.getText())
-                    .thenReturn("nuevaPass123");
+                        when(repeatPasswordField.getText())
+                                        .thenReturn("diferente");
 
-            pwMock.when(() ->
-                            PasswordUtils.checkPassword(
-                                    "correcta",
-                                    "hash"))
-                    .thenReturn(true);
+                        pwMock.when(() -> PasswordUtils.checkPassword(
+                                        "correcta",
+                                        "hash"))
+                                        .thenReturn(true);
 
-            pwMock.when(() ->
-                            PasswordUtils.hashPassword(
-                                    "nuevaPass123"))
-                    .thenReturn("nuevoHash");
+                        invoke("cambiarPassword");
 
-            when(usuarioService.update(user))
-                    .thenReturn(false);
-
-            invoke("cambiarPassword");
-
-            screenMock.verifyNoInteractions();
+                        verify(usuarioService, never())
+                                        .update(any());
+                }
         }
-    }
 
-    @Test
-    void volver_navegaAPerfil() {
+        @Test
+        void cambiarPassword_contrasenaNuevaCorta_noActualiza() {
 
-        try (MockedStatic<ScreenManager> screenMock =
-                     mockStatic(ScreenManager.class)) {
+                try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<PasswordUtils> pwMock = mockStatic(PasswordUtils.class)) {
 
-            invoke("volver");
+                        Usuario user = usuarioConPassword("hash");
 
-            screenMock.verify(() ->
-                    ScreenManager.change("perfil.fxml"));
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(user);
+
+                        when(oldPasswordField.getText())
+                                        .thenReturn("correcta");
+
+                        when(newPasswordField.getText())
+                                        .thenReturn("abc");
+
+                        when(repeatPasswordField.getText())
+                                        .thenReturn("abc");
+
+                        pwMock.when(() -> PasswordUtils.checkPassword(
+                                        "correcta",
+                                        "hash"))
+                                        .thenReturn(true);
+
+                        invoke("cambiarPassword");
+
+                        verify(usuarioService, never())
+                                        .update(any());
+                }
         }
-    }
 
-    private Usuario usuarioConPassword(String hash) {
+        @Test
+        void cambiarPassword_datosValidos_actualizaYRedirige() {
 
-        Usuario u = new Usuario();
+                try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<PasswordUtils> pwMock = mockStatic(PasswordUtils.class);
+                                MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
 
-        u.setId(1);
-        u.setPassword(hash);
+                        Usuario user = usuarioConPassword("hash");
 
-        return u;
-    }
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(user);
 
-    private void setField(String name, Object value)
-            throws Exception {
+                        when(oldPasswordField.getText())
+                                        .thenReturn("correcta");
 
-        Field f = CambiarPasswordController.class
-                .getDeclaredField(name);
+                        when(newPasswordField.getText())
+                                        .thenReturn("nuevaPass123");
 
-        f.setAccessible(true);
+                        when(repeatPasswordField.getText())
+                                        .thenReturn("nuevaPass123");
 
-        f.set(controller, value);
-    }
+                        pwMock.when(() -> PasswordUtils.checkPassword(
+                                        "correcta",
+                                        "hash"))
+                                        .thenReturn(true);
 
-    private void invoke(String methodName) {
+                        pwMock.when(() -> PasswordUtils.hashPassword(
+                                        "nuevaPass123"))
+                                        .thenReturn("nuevoHash");
 
-        try {
+                        when(usuarioService.update(user))
+                                        .thenReturn(true);
 
-            Method m = CambiarPasswordController.class
-                    .getDeclaredMethod(methodName);
+                        invoke("cambiarPassword");
 
-            m.setAccessible(true);
+                        verify(usuarioService)
+                                        .update(user);
 
-            m.invoke(controller);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+                        screenMock.verify(() -> ScreenManager.change("perfil.fxml"));
+                }
         }
-    }
+
+        @Test
+        void cambiarPassword_errorEnServicio_noRedirige() {
+
+                try (MockedStatic<Session> sessionMock = mockStatic(Session.class);
+                                MockedStatic<PasswordUtils> pwMock = mockStatic(PasswordUtils.class);
+                                MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
+
+                        Usuario user = usuarioConPassword("hash");
+
+                        sessionMock.when(Session::getCurrentUser)
+                                        .thenReturn(user);
+
+                        when(oldPasswordField.getText())
+                                        .thenReturn("correcta");
+
+                        when(newPasswordField.getText())
+                                        .thenReturn("nuevaPass123");
+
+                        when(repeatPasswordField.getText())
+                                        .thenReturn("nuevaPass123");
+
+                        pwMock.when(() -> PasswordUtils.checkPassword(
+                                        "correcta",
+                                        "hash"))
+                                        .thenReturn(true);
+
+                        pwMock.when(() -> PasswordUtils.hashPassword(
+                                        "nuevaPass123"))
+                                        .thenReturn("nuevoHash");
+
+                        when(usuarioService.update(user))
+                                        .thenReturn(false);
+
+                        invoke("cambiarPassword");
+
+                        screenMock.verifyNoInteractions();
+                }
+        }
+
+        @Test
+        void volver_navegaAPerfil() {
+
+                try (MockedStatic<ScreenManager> screenMock = mockStatic(ScreenManager.class)) {
+
+                        invoke("volver");
+
+                        screenMock.verify(() -> ScreenManager.change("perfil.fxml"));
+                }
+        }
+
+        private Usuario usuarioConPassword(String hash) {
+
+                Usuario u = new Usuario();
+
+                u.setId(1);
+                u.setPassword(hash);
+
+                return u;
+        }
+
+        private void setField(String name, Object value)
+                        throws Exception {
+
+                Field f = CambiarPasswordController.class
+                                .getDeclaredField(name);
+
+                f.setAccessible(true);
+
+                f.set(controller, value);
+        }
+
+        private void invoke(String methodName) {
+
+                try {
+
+                        Method m = CambiarPasswordController.class
+                                        .getDeclaredMethod(methodName);
+
+                        m.setAccessible(true);
+
+                        m.invoke(controller);
+
+                } catch (Exception e) {
+                        throw new RuntimeException(e);
+                }
+        }
 }

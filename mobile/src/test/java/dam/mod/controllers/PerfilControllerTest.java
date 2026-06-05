@@ -161,4 +161,16 @@ class PerfilControllerTest {
             screenMock.verify(() -> ScreenManager.change("cambiar_telefono.fxml"));
         }
     }
+
+    @Test
+void setService_asignaElServicio() {
+    IUsuarioService nuevoServicio = mock(IUsuarioService.class);
+
+    perfilController.setService(nuevoServicio);
+
+    try (MockedStatic<ScreenManager> screenMock = Mockito.mockStatic(ScreenManager.class)) {
+        perfilController.cerrarSesion();
+        verify(nuevoServicio).logout();
+    }
+}
 }
