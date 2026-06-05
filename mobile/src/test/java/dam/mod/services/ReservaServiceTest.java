@@ -358,4 +358,95 @@ public class ReservaServiceTest {
         when(repositoryMock.findByIdUsuario(anyInt())).thenReturn(Collections.emptyList());
         Assertions.assertTrue(service.findByIdUsuario(99).isEmpty());
     }
+
+    @DisplayName("cambiarEstado: reserva inexistente lanza IllegalArgumentException")
+@Order(32)
+@Test
+void cambiarEstado_reservaNoExiste_lanzaExcepcion() {
+    when(repositoryMock.findById(99)).thenReturn(null);
+
+    Assertions.assertThrows(IllegalArgumentException.class,
+            () -> service.cambiarEstado(99, "CANCELADA"));
+}
+
+@DisplayName("cambiarEstado: estado inválido lanza IllegalArgumentException")
+@Order(33)
+@Test
+void cambiarEstado_estadoInvalido_lanzaExcepcion() {
+    when(repositoryMock.findById(1)).thenReturn(reservaValida);
+
+    Assertions.assertThrows(IllegalArgumentException.class,
+            () -> service.cambiarEstado(1, "INVALIDO"));
+}
+
+@DisplayName("cambiarEstado: CANCELADA sobre reserva ACTIVA llama cancelarPlaza")
+@Order(34)
+@Test
+void cambiarEstado_cancelarReservaActiva_llamaCancelarPlaza() {
+    Reserva reservaActiva = new Reserva(1, 2, 3, LocalDate.now(), "ACTIVA");
+    when(repositoryMock.findById(1)).thenReturn(reservaActiva);
+    when(repositoryMock.update(any())).thenReturn(true);
+
+    service.cambiarEstado(1, "CANCELADA");
+
+    verify(actividadServiceMock).cancelarPlaza(3);
+    verify(actividadServiceMock, never()).reservarPlaza(anyInt());
+}
+
+@DisplayName("cambiarEstado: CANCELADA sobre reserva ya CANCELADA no llama cancelarPlaza")
+@Order(35)
+@Test
+void cambiarEstado_cancelarReservaYaCancelada_noLlamaCancelarPlaza() {
+    Reserva reservaCancelada = new Reserva(1, 2, 3, LocalDate.now(), "CANCELADA");
+    when(repositoryMock.findById(1)).thenReturn(reservaCancelada);
+    when(repositoryMock.update(any())).thenReturn(true);
+
+    service.cambiarEstado(1, "CANCELADA");
+
+    verify(actividadServiceMock, never()).cancelarPlaza(anyInt());
+    verify(actividadServiceMock, never()).reservarPlaza(anyInt());
+}
+
+@DisplayName("cambiarEstado: ACTIVA sobre reserva CANCELADA llama reservarPlaza")
+@Order(36)
+@Test
+void cambiarEstado_reactivarReservaCancelada_llamaReservarPlaza() {
+    Reserva reservaCancelada = new Reserva(1, 2, 3, LocalDate.now(), "CANCELADA");
+    when(repositoryMock.findById(1)).thenReturn(reservaCancelada);
+    when(repositoryMock.update(any())).thenReturn(true);
+
+    service.cambiarEstado(1, "ACTIVA");
+
+    verify(actividadServiceMock).reservarPlaza(3);
+    verify(actividadServiceMock, never()).cancelarPlaza(anyInt());
+}
+
+@DisplayName("cambiarEstado: ACTIVA no llama a cancelarPlaza ni reservarPlaza")
+@Order(37)
+@Test
+void cambiarEstado_activa_noLlamaNiCancelarNiReservar() {
+    Reserva reservaActiva = new Reserva(1, 2, 3, LocalDate.now(), "ACTIVA");
+    when(repositoryMock.findById(1)).thenReturn(reservaActiva);
+    when(repositoryMock.update(any())).thenReturn(true);
+
+    service.cambiarEstado(1, "ACTIVA");
+
+    verify(actividadServiceMock, never()).cancelarPlaza(anyInt());
+    verify(actividadServiceMock, never()).reservarPlaza(anyInt());
+}
+
+@DisplayName("cambiarEstado: actualiza el estado en el repositorio y devuelve true")
+@Order(38)
+@Test
+void cambiarEstado_actualizaEstadoEnRepositorio() {
+    Reserva reservaActiva = new Reserva(1, 2, 3, LocalDate.now(), "ACTIVA");
+    when(repositoryMock.findById(1)).thenReturn(reservaActiva);
+    when(repositoryMock.update(any())).thenReturn(true);
+
+    boolean resultado = service.cambiarEstado(1, "ACTIVA");
+
+    Assertions.assertTrue(resultado);
+    verify(repositoryMock).update(reservaActiva);
+    Assertions.assertEquals("ACTIVA", reservaActiva.getEstado());
+}
 }
